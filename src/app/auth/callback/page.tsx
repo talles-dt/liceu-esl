@@ -6,6 +6,20 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground">Environment not configured.</p>
+        </div>
+      </main>
+    );
+  }
+
   const supabase = createClient();
 
   useEffect(() => {
