@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface Question {
@@ -9,84 +9,44 @@ interface Question {
   options: string[];
   correctIndex: number;
   cefr_level: string;
-  exerciseId?: string;
 }
 
-type Phase = "loading" | "profile" | "testing" | "result" | "redirecting";
+type Phase = "intro" | "testing" | "result";
 
 export default function OnboardingPage() {
-  const [phase, setPhase] = useState<Phase>("loading");
-  const [name, setName] = useState("");
-  const [professionalContext, setProfessionalContext] = useState("");
+  const [phase, setPhase] = useState<Phase>("intro");
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [exerciseIds, setExerciseIds] = useState<string[]>([]);
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [resultLevel, setResultLevel] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const supabase = createClient();
 
-  useEffect(() => {
-    const check = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        router.push("/auth/login");
-        return;
+  const startTest = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/placement-test", { method: "POST" });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to generate test");
       }
-
-      const { data: profile } = await supabase
-        .from("user_profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (profile?.onboarding_complete) {
-        router.push("/dashboard");
-        return;
-      }
-
-      setPhase("profile");
-    };
-    check();
-  }, [supabase, router]);
-
-  const handleProfileSubmit = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
-
-    await supabase
-      .from("user_profiles")
-      .update({
-        name: name.trim(),
-        professional_context: professionalContext.trim() || null,
-      })
-      .eq("id", user.id);
-
-    setPhase("loading");
-
-    // Generate placement test
-    const res = await fetch("/api/placement-test", { method: "POST" });
-    if (!res.ok) {
-      console.error("Failed to generate placement test");
-      return;
+      const data = await res.json();
+      setQuestions(data.questions);
+      setPhase("testing");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-
-    const data = await res.json();
-    setQuestions(data.questions);
-    setExerciseIds(data.exerciseIds);
-    setPhase("testing");
-  };
+  }, []);
 
   const handleAnswer = async (optionIndex: number) => {
     const newAnswers = [...answers, optionIndex];
     setAnswers(newAnswers);
 
-    // Adaptive logic: if wrong, next question stays same or easier; if right, go harder
-    // For simplicity, just move to next question
     if (currentQ + 1 >= questions.length) {
       // Calculate result
       const correctCount = newAnswers.reduce(
@@ -102,103 +62,79 @@ export default function OnboardingPage() {
       else if (pct >= 0.55) level = "B1";
       else if (pct >= 0.4) level = "A2";
 
-      // Record completions for each question
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        for (let i = 0; i < questions.length; i++) {
-          if (exerciseIds[i]) {
-            await supabase.from("completions").insert({
-              user_id: user.id,
-              exercise_id: exerciseIds[i],
-              correct: newAnswers[i] === questions[i].correctIndex,
-              attempt_number: 1,
-            });
-          }
-        }
-
-        // Save level
-        setResultLevel(level);
-        await fetch("/api/placement-result", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ level }),
-        });
-
-        setPhase("result");
-      }
+      setResultLevel(level);
+      setPhase("result");
     } else {
       setCurrentQ(currentQ + 1);
     }
   };
 
-  if (phase === "loading") {
-    return (
-      <main className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto" />
-          <p className="text-muted-foreground">Generating your test...</p>
-        </div>
-      </main>
-    );
-  }
-
-  if (phase === "profile") {
+  // Intro screen
+  if (phase === "intro") {
     return (
       <main className="min-h-screen bg-background flex items-center justify-center p-4">
-        <div className="w-full max-w-md space-y-8">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold">Welcome to Lexio</h1>
-            <p className="text-muted-foreground mt-2">
-              Let's set up your profile and find your level.
+        <div className="w-full max-w-2xl space-y-8 text-center">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-xs font-medium text-primary mb-6">
+              🎯 Free CEFR Assessment
+            </div>
+            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
+              Find Your English Level
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-lg mx-auto">
+              15 adaptive questions. Takes about 5 minutes. No account
+              required.
             </p>
           </div>
 
-          <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Your Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="What should we call you?"
-                className="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Professional Context (optional)
-              </label>
-              <select
-                value={professionalContext}
-                onChange={(e) => setProfessionalContext(e.target.value)}
-                className="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+          {error && (
+            <div className="bg-destructive/10 border border-destructive/20 text-destructive rounded-lg p-3 text-sm max-w-md mx-auto">
+              {error}
+              <button
+                onClick={startTest}
+                className="ml-2 underline hover:no-underline"
               >
-                <option value="">Select your field</option>
-                <option value="IT">Technology / IT</option>
-                <option value="Finance">Finance / Banking</option>
-                <option value="Healthcare">Healthcare</option>
-                <option value="Education">Education</option>
-                <option value="Business">Business / Management</option>
-                <option value="Other">Other</option>
-              </select>
+                Try again
+              </button>
             </div>
+          )}
 
-            <button
-              onClick={handleProfileSubmit}
-              disabled={!name.trim()}
-              className="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition disabled:opacity-50"
-            >
-              Start Placement Test
-            </button>
+          <div className="grid grid-cols-3 gap-4 max-w-md mx-auto">
+            {[
+              { icon: "🎯", label: "15 Questions" },
+              { icon: "⏱️", label: "~5 Minutes" },
+              { icon: "📊", label: "A1–C2 Result" },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="bg-card border border-border rounded-xl p-4 space-y-2"
+              >
+                <div className="text-2xl">{item.icon}</div>
+                <p className="text-xs text-muted-foreground">{item.label}</p>
+              </div>
+            ))}
           </div>
+
+          <button
+            onClick={startTest}
+            disabled={loading}
+            className="px-10 py-4 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition text-lg disabled:opacity-50 neon-glow"
+          >
+            {loading ? "Generating your test..." : "Start Placement Test"}
+          </button>
+
+          <p className="text-xs text-muted-foreground">
+            Already have an account?{" "}
+            <Link href="/auth/login" className="text-primary hover:underline">
+              Sign in
+            </Link>
+          </p>
         </div>
       </main>
     );
   }
 
+  // Testing screen
   if (phase === "testing") {
     const q = questions[currentQ];
     if (!q) return null;
@@ -219,23 +155,27 @@ export default function OnboardingPage() {
           <div className="h-2 bg-secondary rounded-full overflow-hidden">
             <div
               className="h-full bg-primary transition-all"
-              style={{ width: `${((currentQ + 1) / questions.length) * 100}%` }}
+              style={{
+                width: `${((currentQ + 1) / questions.length) * 100}%`,
+              }}
             />
           </div>
 
           {/* Question */}
-          <div className="bg-card border border-border rounded-xl p-6 space-y-6">
-            <h2 className="text-xl font-semibold">{q.question}</h2>
+          <div className="bg-card border border-border rounded-xl p-6 md:p-8 space-y-6">
+            <h2 className="text-xl md:text-2xl font-semibold leading-relaxed">
+              {q.question}
+            </h2>
 
             <div className="space-y-3">
               {q.options.map((option, i) => (
                 <button
                   key={i}
                   onClick={() => handleAnswer(i)}
-                  className="w-full text-left p-4 rounded-lg border-2 border-border bg-card hover:border-primary/50 hover:bg-primary/5 transition"
+                  className="w-full text-left p-4 rounded-lg border-2 border-border bg-card hover:border-primary/50 hover:bg-primary/5 transition text-sm md:text-base"
                 >
                   <span className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full border-2 border-border flex items-center justify-center text-xs font-bold">
+                    <span className="w-7 h-7 rounded-full border-2 border-border flex items-center justify-center text-xs font-bold shrink-0">
                       {String.fromCharCode(65 + i)}
                     </span>
                     {option}
@@ -244,30 +184,77 @@ export default function OnboardingPage() {
               ))}
             </div>
           </div>
+
+          <Link
+            href="/"
+            className="block text-center text-muted-foreground hover:text-foreground transition text-sm"
+          >
+            ← Back to home
+          </Link>
         </div>
       </main>
     );
   }
 
+  // Result screen
   if (phase === "result") {
     return (
       <main className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="w-full max-w-md text-center space-y-6">
           <div className="text-6xl">🎉</div>
-          <h1 className="text-3xl font-bold">Your Level: {resultLevel}</h1>
-          <p className="text-muted-foreground">
-            You've been placed at CEFR level <strong>{resultLevel}</strong>.
-            Time to put in the work!
-          </p>
-
-          <div className="flex flex-col gap-3">
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition"
-            >
-              Go to Dashboard
-            </button>
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold">Your Level: {resultLevel}</h1>
+            <p className="text-muted-foreground">
+              You've been placed at CEFR level{" "}
+              <strong className="text-primary">{resultLevel}</strong>.
+            </p>
           </div>
+
+          {/* Level description */}
+          <div className="bg-card border border-border rounded-xl p-4 text-left space-y-2">
+            <p className="text-sm font-medium">
+              {resultLevel === "A1" && "Beginner"}
+              {resultLevel === "A2" && "Elementary"}
+              {resultLevel === "B1" && "Intermediate"}
+              {resultLevel === "B2" && "Upper Intermediate"}
+              {resultLevel === "C1" && "Advanced"}
+              {resultLevel === "C2" && "Proficiency"}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {resultLevel === "A1" &&
+                "You can understand and use familiar everyday expressions and very basic phrases."}
+              {resultLevel === "A2" &&
+                "You can understand sentences and frequently used expressions related to basic personal and family information."}
+              {resultLevel === "B1" &&
+                "You can understand the main points of clear standard input on familiar matters regularly encountered in work, school, and leisure."}
+              {resultLevel === "B2" &&
+                "You can understand the main ideas of complex text on both concrete and abstract topics, including technical discussions."}
+              {resultLevel === "C1" &&
+                "You can understand a wide range of demanding, longer texts, and recognize implicit meaning."}
+              {resultLevel === "C2" &&
+                "You can understand with ease virtually everything heard or read."}
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <Link
+              href="/auth/login"
+              className="block w-full py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition neon-glow"
+            >
+              Create Account & Start Learning
+            </Link>
+            <Link
+              href="/"
+              className="block w-full py-3 bg-secondary text-secondary-foreground font-semibold rounded-xl hover:bg-secondary/80 transition"
+            >
+              Back to Home
+            </Link>
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            Create a free account to track your progress, access exercises, and
+            chat with Leo — our AI tutor.
+          </p>
         </div>
       </main>
     );

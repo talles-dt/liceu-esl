@@ -41,7 +41,7 @@ export async function middleware(request: NextRequest) {
   const pathname = url.pathname;
 
   // Public routes that don't require auth
-  const publicRoutes = ["/", "/auth", "/api/webhooks"];
+  const publicRoutes = ["/", "/auth", "/onboarding", "/api/webhooks"];
   const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
 
   // If not authenticated and not on public route, redirect to auth

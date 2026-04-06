@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import Anthropic from "@anthropic-ai/sdk";
 
 const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
@@ -28,45 +27,17 @@ Rules:
 - Question 15: C2 level
 - Mix grammar and vocabulary
 - Each question must have exactly one correct answer
-- Options should be plausible distractors`;
+- Options should be plausible distractors
+- Keep questions concise and clear`;
 
 export async function POST() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  // Check if eligible for retake
-  const { data: profile } = await supabase
-    .from("user_profiles")
-    .select("placement_test_eligible_at, cefr_level")
-    .eq("id", user.id)
-    .single();
-
-  if (profile?.cefr_level) {
-    // Already has a level — check retake eligibility
-    if (profile.placement_test_eligible_at) {
-      const eligibleDate = new Date(profile.placement_test_eligible_at);
-      if (new Date() < eligibleDate) {
-        return NextResponse.json(
-          { error: "You can retake the test after 30 days" },
-          { status: 403 }
-        );
-      }
-    }
-  }
-
   const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
   });
 
   const message = await anthropic.messages.create({
     model: "claude-sonnet-4-20250514",
-    max_tokens: 4096,
+    max_tokens: 8192,
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: "Generate a placement test." }],
   });
@@ -81,34 +52,8 @@ export async function POST() {
       throw new Error("Invalid format");
     }
 
-    // Insert as draft exercises
-    const exerciseIds: string[] = [];
-    for (const q of parsed.questions) {
-      const { data, error } = await supabase
-        .from("exercises")
-        .insert({
-          language: "en",
-          cefr_level: q.cefr_level,
-          skill: q.skill === "grammar" ? "grammar" : "vocabulary",
-          type: "mcq",
-          content: {
-            question: q.question,
-            options: q.options,
-            correctIndex: q.correctIndex,
-            explanation: "",
-          },
-          status: "approved", // Placement test questions are auto-approved
-          ai_generated: true,
-          generated_by: "claude-sonnet-4-20250514-placement",
-        })
-        .select("id")
-        .single();
-
-      if (data) exerciseIds.push(data.id);
-      if (error) console.error("Placement test insert error:", error);
-    }
-
-    return NextResponse.json({ questions: parsed.questions, exerciseIds });
+    // Return questions directly (no DB storage needed for public test)
+    return NextResponse.json({ questions: parsed.questions });
   } catch (e) {
     return NextResponse.json(
       { error: "Failed to generate placement test", raw: content },
