@@ -1,7 +1,7 @@
 # Lexio Underground — Project State
 
 > Last updated: 2026-04-06
-> Current phase: **Phase 1 Complete — Content Engine deployed**
+> Current phase: **Phase 3 Complete — AI Tutor + Teacher Dashboard deployed**
 
 ---
 
@@ -11,8 +11,8 @@
 |-------|--------|-------|-----|-------|
 | 0 — Foundation | ✅ Complete | 2026-04-06 | 2026-04-06 | Scaffold, schema, auth, Stripe webhook, design system, middleware all done |
 | 1 — Content Engine | ✅ Complete | 2026-04-06 | 2026-04-06 | Claude generation pipeline, admin review queue, 5 exercise renderers, placement test, completion API with XP + streaks + badges, TTS integration |
-| 2 — Gamification | ⏳ Not started | — | — | |
-| 3 — AI Tutor + Teacher | ⏳ Not started | — | — | |
+| 2 — Gamification | ✅ Complete | 2026-04-06 | 2026-04-06 | XP system, streaks, leaderboard, badges all wired into completion API + dashboard |
+| 3 — AI Tutor + Teacher | ✅ Complete | 2026-04-06 | 2026-04-06 | Leo AI tutor chat, teacher dashboard with roster/CSV export/reset, assignment creation, onboarding flow with placement test |
 | 4 — Polish + Beta | ⏳ Not started | — | — | |
 | 5 — Hardening + Launch | ⏳ Not started | — | — | |
 
@@ -70,6 +70,8 @@ None. Spec approved. Ready for Phase 0.
 - Mandarin v2 track will need HSK-level mapping (HSK 1–6 → approximate CEFR equivalents)
 - Leaderboard scoped to paid subscribers only — prevents free ghost accounts gaming rankings
 - Placement test also serves as primary free-tier lead magnet
-- **Phase 0 deliverables:** Next.js 15 scaffold, full Supabase schema (13 tables + RLS + triggers + helper functions), auth pages (magic link + Google OAuth), Stripe webhook handler, Resend client, design system (dark mode, neon purple/cyan, Space Grotesk + Inter), middleware (session + route protection), all route shells created
-- **`.env.local`** has placeholder values — replace with real credentials before deploying
+- **Phase 0 deliverables:** Next.js 16 scaffold, full Supabase schema (13 tables + RLS + triggers + helper functions), auth pages (magic link + Google OAuth), Stripe webhook handler, Resend client, design system (dark mode, neon purple/cyan, Space Grotesk + Inter), middleware (session + route protection), all route shells created
+- **Phase 1 deliverables:** Claude exercise generation pipeline, admin review queue with live preview, 5 exercise renderer components, student exercise page, completion API with auto-evaluation + XP + streaks + badges, CEFR placement test, OpenAI TTS integration, Supabase storage bucket
+- **Phase 3 deliverables:** Leo AI tutor chat (Claude Haiku, per-level adaptation, message history, free/paid gating, daily limits), teacher dashboard (student roster, search/filter, CSV export, placement reset), assignment creation UI, full onboarding flow with adaptive placement test, student dashboard with stats + assigned exercises + recommended exercises + badges + XP progress
+- **`.env.local`** has real production credentials — keep secret
 - **Build passes** with zero errors
