@@ -1,7 +1,7 @@
 # Lexio Underground — Project State
 
 > Last updated: 2026-04-06
-> Current phase: **Phase 0 Complete — Foundation deployed**
+> Current phase: **Phase 1 Complete — Content Engine deployed**
 
 ---
 
@@ -10,7 +10,7 @@
 | Phase | Status | Start | End | Notes |
 |-------|--------|-------|-----|-------|
 | 0 — Foundation | ✅ Complete | 2026-04-06 | 2026-04-06 | Scaffold, schema, auth, Stripe webhook, design system, middleware all done |
-| 1 — Content Engine | ⏳ Not started | — | — | |
+| 1 — Content Engine | ✅ Complete | 2026-04-06 | 2026-04-06 | Claude generation pipeline, admin review queue, 5 exercise renderers, placement test, completion API with XP + streaks + badges, TTS integration |
 | 2 — Gamification | ⏳ Not started | — | — | |
 | 3 — AI Tutor + Teacher | ⏳ Not started | — | — | |
 | 4 — Polish + Beta | ⏳ Not started | — | — | |
