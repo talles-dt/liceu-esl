@@ -106,6 +106,18 @@ export default async function DashboardPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link
+              href="/billing"
+              className="px-3 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition text-sm flex items-center gap-2"
+            >
+              💳 Billing
+            </Link>
+            <Link
+              href="/feedback"
+              className="px-3 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition text-sm flex items-center gap-2"
+            >
+              💬 Feedback
+            </Link>
+            <Link
               href="/tutor"
               className="px-3 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition text-sm flex items-center gap-2"
             >
