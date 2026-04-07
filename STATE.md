@@ -35,26 +35,32 @@
 
 ## Open Questions
 
-| # | Question | Priority | Owner |
-|---|----------|----------|-------|
-| 1 | Pricing: exact monthly price in BRL? (Suggested: R$49–R$79/mo) | High | Timon |
-| 2 | Brand assets ready? (Logo, colors, fonts for Lexio sub-brand) | High | Timon |
-| 3 | Custom domain for Lexio? (e.g. lexiounderground.com.br) | Medium | Timon |
-| 4 | Teacher account expansion in v1 or v2? (Currently: only Timon as teacher) | Medium | Timon |
-| 5 | Beta cohort size? How many Liceu students to invite first? | Low | Timon |
+| # | Question | Status |
+|---|----------|--------|
+| 1 | Pricing: R$99/mo | ✅ Decided |
+| 2 | Brand assets (OG image) | ⏳ In progress — Timon creating |
+| 3 | Custom domain | ✅ lexio.oliceu.com |
+| 4 | Cal.com integration | ✅ Built — needs `NEXT_PUBLIC_CAL_COM_USERNAME` env var |
+| 5 | Beta cohort size | ⏳ Pending — Timon to recruit |
+| 6 | CRON_SECRET for streak emails | ⏳ Needs to be set in Vercel env vars |
 
 ---
 
 ## Environment Checklist
 
-- [x] GitHub repo created (existing directory)
-- [ ] Vercel project created (staging + production) — *run `vercel` to deploy*
-- [ ] Supabase project created — *apply migration: `supabase/migrations/001_initial_schema.sql`*
-- [ ] Stripe account / product configured — *set `STRIPE_PRICE_ID` in env*
-- [ ] Anthropic API key provisioned — *set `ANTHROPIC_API_KEY` in env*
-- [ ] OpenAI API key provisioned (TTS) — *set `OPENAI_API_KEY` in env*
-- [ ] Resend domain verified — *set `RESEND_API_KEY` and `RESEND_FROM_EMAIL` in env*
-- [ ] Custom domain registered — *see open question #3*
+- [x] GitHub repo created
+- [x] Vercel project created (staging + production) — deployed to lexio.oliceu.com
+- [x] Supabase project created — all 3 migrations applied
+- [x] Stripe account / product configured
+- [x] Anthropic API key provisioned
+- [x] OpenAI API key provisioned (TTS)
+- [x] Resend domain verified
+- [x] Custom domain registered (lexio.oliceu.com)
+- [ ] `NEXT_PUBLIC_CAL_COM_USERNAME` — set in Vercel env vars
+- [ ] `CRON_SECRET` — set in Vercel env vars
+- [ ] `STRIPE_PRICE_ID` — updated to R$99 price in Stripe dashboard
+- [ ] Vercel cron configured (`vercel.json` for streak check)
+- [ ] OG image uploaded (`public/og-image.png`)
 
 ---
 
