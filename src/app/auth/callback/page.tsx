@@ -15,41 +15,35 @@ function CallbackHandler() {
     const handleCallback = async () => {
       const code = searchParams.get("code");
 
-      if (code) {
-        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-        if (exchangeError) {
-          console.error("PKCE exchange failed:", exchangeError);
-          setError("Failed to complete sign in.");
-          setTimeout(() => router.push("/auth/login"), 2000);
-          return;
-        }
-      }
-
-      // Small delay to ensure cookie is set, then get user
-      await new Promise((r) => setTimeout(r, 100));
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        setError("No session found.");
+      if (!code) {
+        setError("No code found in URL.");
         setTimeout(() => router.push("/auth/login"), 2000);
         return;
       }
 
-      // Check onboarding status
-      const { data: profile } = await supabase
-        .from("user_profiles")
-        .select("onboarding_complete, cefr_level")
-        .eq("id", user.id)
-        .single();
+      // Exchange PKCE code for session
+      const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
-      if (profile?.onboarding_complete && profile?.cefr_level) {
-        router.push("/dashboard");
-      } else {
-        router.push("/onboarding");
+      if (exchangeError) {
+        console.error("Exchange error:", exchangeError.message, exchangeError);
+        setError(exchangeError.message);
+        setTimeout(() => router.push("/auth/login"), 2000);
+        return;
       }
+
+      // Verify session exists
+      if (!data.session) {
+        console.error("No session returned from exchangeCodeForSession");
+        setError("No session established.");
+        setTimeout(() => router.push("/auth/login"), 2000);
+        return;
+      }
+
+      console.log("Auth callback: session established for", data.user?.email);
+
+      // Navigate to dashboard — it will check onboarding status
+      // Use window.location to force a full page reload so middleware re-checks the session
+      window.location.href = "/dashboard";
     };
 
     handleCallback();

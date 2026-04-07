@@ -24,6 +24,11 @@ export default async function DashboardPage() {
     redirect("/auth/login");
   }
 
+  // Redirect to onboarding if not completed
+  if (!profile.onboarding_complete || !profile.cefr_level) {
+    redirect("/onboarding");
+  }
+
   // Fetch stats
   const { data: xp } = await supabase.rpc("get_user_total_xp", {
     p_user_id: user.id,
