@@ -82,7 +82,7 @@ export default function Home() {
               <p className="text-xs mt-1">AI Tutor Available</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-foreground">R$49</p>
+              <p className="text-3xl font-bold text-foreground">R$99</p>
               <p className="text-xs mt-1">/month Pro Plan</p>
             </div>
           </div>
@@ -188,9 +188,9 @@ export default function Home() {
                 desc: "A conversational tutor that knows your CEFR level. Practice anytime, get corrections that actually help.",
               },
               {
-                icon: "👨‍🏫",
-                title: "Teacher Oversight",
-                desc: "Teachers can assign exercises, track progress, and reset levels. AI generates, humans verify.",
+                icon: "📅",
+                title: "Live Classes",
+                desc: "Book 1-on-1 sessions with your teacher via Cal.com. AI generates, humans verify — the best of both worlds.",
               },
             ].map((feature) => (
               <div
@@ -427,7 +427,7 @@ export default function Home() {
               <div>
                 <h3 className="text-lg font-semibold">Pro</h3>
                 <p className="text-4xl font-bold mt-2">
-                  R$49
+                  R$99
                   <span className="text-base font-normal text-muted-foreground">
                     /month
                   </span>
@@ -531,17 +531,26 @@ export default function Home() {
               <h4 className="font-semibold mb-2">Legal</h4>
               <ul className="space-y-1 text-sm text-muted-foreground">
                 <li>
-                  <a href="#" className="hover:text-foreground transition">
+                  <Link
+                    href="/terms"
+                    className="hover:text-foreground transition"
+                  >
                     Terms of Use
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-foreground transition">
+                  <Link
+                    href="/privacy"
+                    className="hover:text-foreground transition"
+                  >
                     Privacy Policy
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-foreground transition">
+                  <a
+                    href="mailto:talles@oliceu.com"
+                    className="hover:text-foreground transition"
+                  >
                     Contact
                   </a>
                 </li>

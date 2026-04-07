@@ -56,6 +56,27 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Subscription gate: paid-only routes
+  const paidRoutes = ["/exercise", "/tutor", "/leaderboard", "/book"];
+  const isPaidRoute = paidRoutes.some((route) => pathname.startsWith(route));
+
+  if (user && isPaidRoute) {
+    const { data: subscription } = await supabase
+      .from("subscriptions")
+      .select("status")
+      .eq("user_id", user.id)
+      .single();
+
+    const isPaid =
+      subscription?.status === "active" || subscription?.status === "trialing";
+
+    if (!isPaid) {
+      url.pathname = "/billing";
+      url.searchParams.set("reason", "subscription_required");
+      return NextResponse.redirect(url);
+    }
+  }
+
   // Subscription and role-based gating handled in page-level components
   // (middleware is for auth session only to keep it fast)
 

@@ -117,7 +117,7 @@ export default async function BillingPage() {
             </div>
 
             <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 text-center">
-              <p className="text-3xl font-bold">R$49</p>
+              <p className="text-3xl font-bold">R$99</p>
               <p className="text-muted-foreground text-sm">/month</p>
             </div>
 
