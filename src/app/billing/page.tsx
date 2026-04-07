@@ -68,14 +68,14 @@ export default async function BillingPage() {
   return (
     <main className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-2xl mx-auto space-y-6">
-        <h1 className="text-2xl font-bold">Billing & Subscription</h1>
+        <h1 className="text-2xl font-bold">Faturamento e Assinatura</h1>
 
         {isPaid ? (
           <div className="bg-card border border-border rounded-xl p-6 space-y-4">
             <div className="flex items-center gap-3">
               <span className="text-2xl">✅</span>
               <div>
-                <p className="font-semibold">Pro Plan Active</p>
+                <p className="font-semibold">Plano Pro Ativo</p>
                 <p className="text-sm text-muted-foreground">
                   Status:{" "}
                   <span className="text-success capitalize">
@@ -87,7 +87,7 @@ export default async function BillingPage() {
 
             {subscription.current_period_end && (
               <p className="text-sm text-muted-foreground">
-                Next billing date:{" "}
+                Próxima data de cobrança:{" "}
                 {new Date(subscription.current_period_end).toLocaleDateString(
                   "pt-BR"
                 )}
@@ -96,39 +96,37 @@ export default async function BillingPage() {
 
             <form action={createBillingSession}>
               <button className="w-full py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/80 transition">
-                Manage Subscription
+                Gerenciar Assinatura
               </button>
             </form>
 
             <p className="text-xs text-muted-foreground text-center">
-              Manage payment methods, update billing info, or cancel subscription
-              via Stripe.
+              Gerencie formas de pagamento, atualize dados de cobrança ou cancele a assinatura via Stripe.
             </p>
           </div>
         ) : (
           <div className="bg-card border border-primary/30 rounded-xl p-6 space-y-4">
             <div className="text-center space-y-2">
               <span className="text-3xl">🚀</span>
-              <h2 className="text-xl font-bold">Upgrade to Pro</h2>
+              <h2 className="text-xl font-bold">Atualize para o Pro</h2>
               <p className="text-muted-foreground">
-                Unlock the full platform — unlimited exercises, AI tutor, streaks,
-                and leaderboards.
+                Desbloqueie a plataforma completa — exercícios ilimitados, tutor de IA, sequências e tabelas de classificação.
               </p>
             </div>
 
             <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 text-center">
               <p className="text-3xl font-bold">R$99</p>
-              <p className="text-muted-foreground text-sm">/month</p>
+              <p className="text-muted-foreground text-sm">/mês</p>
             </div>
 
             <form action={createCheckoutSession}>
               <button className="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition neon-glow">
-                Start Learning Today
+                Comece a Aprender Hoje
               </button>
             </form>
 
             <p className="text-xs text-muted-foreground text-center">
-              Cancel anytime. Managed securely via Stripe.
+              Cancele a qualquer momento. Gerenciado com segurança via Stripe.
             </p>
           </div>
         )}

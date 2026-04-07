@@ -28,9 +28,9 @@ export default function BookClassPage() {
     return (
       <main className="min-h-screen bg-background p-4 md:p-8">
         <div className="max-w-2xl mx-auto text-center space-y-6">
-          <h1 className="text-2xl font-bold">Schedule a Class</h1>
+          <h1 className="text-2xl font-bold">Agendar uma Aula</h1>
           <p className="text-muted-foreground">
-            Booking is not available yet. Please check back later.
+            O agendamento não está disponível no momento. Por favor, volte mais tarde.
           </p>
         </div>
       </main>
@@ -41,9 +41,9 @@ export default function BookClassPage() {
     <main className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         <div>
-          <h1 className="text-2xl font-bold">Schedule a Class</h1>
+          <h1 className="text-2xl font-bold">Agendar uma Aula</h1>
           <p className="text-muted-foreground mt-1">
-            Book a 1-on-1 session with your teacher. Select a time that works for you.
+            Agende uma sessão individual com seu professor. Selecione um horário que funcione para você.
           </p>
         </div>
 

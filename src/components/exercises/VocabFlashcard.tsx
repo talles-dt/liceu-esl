@@ -39,7 +39,7 @@ export default function VocabFlashcard({ content, submitted, onSelect, onSubmit 
         <p className="text-2xl font-display font-bold text-primary">{content.term}</p>
       </div>
 
-      <p className="text-muted-foreground text-sm">Select the correct definition:</p>
+      <p className="text-muted-foreground text-sm">Selecione a definicao correta:</p>
 
       <div className="space-y-3">
         {options.map((option, i) => {
@@ -83,7 +83,7 @@ export default function VocabFlashcard({ content, submitted, onSelect, onSubmit 
       {submitted && (
         <div className="bg-secondary rounded-lg p-4 text-sm">
           <p className="font-medium">
-            {selected === correctIndex ? "✓ Correct!" : "✗ Incorrect"}
+            {selected === correctIndex ? "✓ Correto!" : "✗ Incorreto"}
           </p>
           <p className="text-muted-foreground mt-1">
             <strong>{content.term}</strong>: {content.definition}
@@ -96,7 +96,7 @@ export default function VocabFlashcard({ content, submitted, onSelect, onSubmit 
           onClick={onSubmit}
           className="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition"
         >
-          Submit answer
+          Enviar resposta
         </button>
       )}
     </div>

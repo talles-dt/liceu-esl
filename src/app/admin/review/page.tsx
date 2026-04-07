@@ -88,14 +88,14 @@ export default function AdminReviewPage() {
   return (
     <main className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-8">
-        <h1 className="text-2xl font-bold">Exercise Review Queue</h1>
+        <h1 className="text-2xl font-bold">Fila de Revisão de Exercícios</h1>
 
         <GenerateForm onGenerated={handleGenerated} />
 
         {loading ? (
-          <p className="text-muted-foreground">Loading drafts...</p>
+          <p className="text-muted-foreground">Carregando rascunhos...</p>
         ) : drafts.length === 0 ? (
-          <p className="text-muted-foreground">No draft exercises. Generate some above.</p>
+          <p className="text-muted-foreground">Nenhum exercício rascunho. Gere alguns acima.</p>
         ) : (
           <div className="space-y-6">
             {drafts.map((ex) => (
@@ -117,13 +117,13 @@ export default function AdminReviewPage() {
                       onClick={() => handleApprove(ex.id)}
                       className="px-4 py-1.5 bg-success/10 text-success border border-success/20 rounded-lg hover:bg-success/20 transition text-sm font-medium"
                     >
-                      Approve
+                      Aprovar
                     </button>
                     <button
                       onClick={() => handleReject(ex.id)}
                       className="px-4 py-1.5 bg-destructive/10 text-destructive border border-destructive/20 rounded-lg hover:bg-destructive/20 transition text-sm font-medium"
                     >
-                      Reject
+                      Rejeitar
                     </button>
                   </div>
                 </div>

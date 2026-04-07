@@ -158,7 +158,7 @@ export default function TutorPage() {
                 Leo <Sparkles size={14} className="text-primary" />
               </h1>
               <p className="text-xs text-muted-foreground">
-                Your AI English Tutor • {isPaid ? `${remaining} messages left today` : `${remaining}/${limit} free messages today`}
+                Seu Tutor de IA para Inglês • {isPaid ? `${remaining} mensagens restantes hoje` : `${remaining}/${limit} mensagens grátis hoje`}
               </p>
             </div>
           </div>
@@ -167,7 +167,7 @@ export default function TutorPage() {
               onClick={handleNewSession}
               className="text-xs text-muted-foreground hover:text-foreground transition px-3 py-1.5 bg-secondary rounded-lg"
             >
-              New conversation
+              Nova conversa
             </button>
           )}
         </div>
@@ -181,9 +181,9 @@ export default function TutorPage() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                 <Bot size={32} className="text-primary" />
               </div>
-              <h2 className="text-xl font-semibold">Hi, I'm Leo!</h2>
+              <h2 className="text-xl font-semibold">Olá, eu sou o Leo!</h2>
               <p className="text-muted-foreground max-w-sm mx-auto">
-                I'm your AI English tutor. We can practice conversation, work on grammar, or discuss any topic you want. What would you like to talk about?
+                Sou seu tutor de inglês com IA. Podemos praticar conversação, trabalhar gramática ou discutir qualquer tema que você quiser. Sobre o que você gostaria de falar?
               </p>
             </div>
           )}
@@ -252,7 +252,7 @@ export default function TutorPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-            placeholder="Type your message..."
+            placeholder="Digite sua mensagem..."
             disabled={sending}
             className="flex-1 px-4 py-3 bg-input border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
           />

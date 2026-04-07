@@ -82,18 +82,18 @@ export default function TeacherDashboardPage() {
   });
 
   const handleExportCSV = () => {
-    const headers = ["Name", "Email", "CEFR Level", "XP", "Streak", "Completion Rate", "Last Active"];
+    const headers = ["Nome", "E-mail", "Nível CEFR", "XP", "Sequência", "Taxa de Conclusão", "Última Atividade"];
     const csvRows = [headers.join(",")];
 
     for (const s of filtered) {
       const lastActive = s.last_active
         ? new Date(s.last_active).toLocaleDateString()
-        : "Never";
+        : "Nunca";
       csvRows.push(
         [
           `"${s.name ?? ""}"`,
           s.email,
-          s.cefr_level ?? "Not placed",
+          s.cefr_level ?? "Não nivelado",
           s.total_xp,
           s.streaks?.current_streak ?? 0,
           s.completion_count,
@@ -112,7 +112,7 @@ export default function TeacherDashboardPage() {
   };
 
   const handleResetPlacement = async (userId: string) => {
-    if (!confirm("Reset this student's CEFR level? They'll need to retake the placement test.")) return;
+    if (!confirm("Redefinir o nível CEFR deste aluno? Eles precisarão refazer o teste de nivelamento.")) return;
 
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
@@ -138,12 +138,12 @@ export default function TeacherDashboardPage() {
     <main className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Teacher Dashboard</h1>
+          <h1 className="text-2xl font-bold">Painel do Professor</h1>
           <button
             onClick={() => router.push("/teacher/assignments")}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition text-sm font-medium"
           >
-            Manage Assignments
+            Gerenciar Tarefas
           </button>
         </div>
 
@@ -153,7 +153,7 @@ export default function TeacherDashboardPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search students..."
+            placeholder="Buscar alunos..."
             className="flex-1 px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           />
           <select
@@ -161,7 +161,7 @@ export default function TeacherDashboardPage() {
             onChange={(e) => setFilterLevel(e.target.value)}
             className="px-3 py-2 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           >
-            <option value="all">All levels</option>
+            <option value="all">Todos os níveis</option>
             {["A1", "A2", "B1", "B2", "C1", "C2"].map((l) => (
               <option key={l} value={l}>{l}</option>
             ))}
@@ -170,35 +170,35 @@ export default function TeacherDashboardPage() {
             onClick={handleExportCSV}
             className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition text-sm"
           >
-            Export CSV
+            Exportar CSV
           </button>
         </div>
 
         {/* Table */}
         {loading ? (
-          <p className="text-muted-foreground">Loading students...</p>
+          <p className="text-muted-foreground">Carregando alunos...</p>
         ) : filtered.length === 0 ? (
-          <p className="text-muted-foreground">No students found.</p>
+          <p className="text-muted-foreground">Nenhum aluno encontrado.</p>
         ) : (
           <div className="bg-card border border-border rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="bg-secondary text-muted-foreground">
                   <tr>
-                    <th className="text-left px-4 py-3 font-medium">Student</th>
-                    <th className="text-left px-4 py-3 font-medium">Level</th>
+                    <th className="text-left px-4 py-3 font-medium">Aluno</th>
+                    <th className="text-left px-4 py-3 font-medium">Nível</th>
                     <th className="text-left px-4 py-3 font-medium">XP</th>
-                    <th className="text-left px-4 py-3 font-medium">Streak</th>
-                    <th className="text-left px-4 py-3 font-medium">Exercises</th>
-                    <th className="text-left px-4 py-3 font-medium">Last Active</th>
-                    <th className="text-right px-4 py-3 font-medium">Actions</th>
+                    <th className="text-left px-4 py-3 font-medium">Sequência</th>
+                    <th className="text-left px-4 py-3 font-medium">Exercícios</th>
+                    <th className="text-left px-4 py-3 font-medium">Última Atividade</th>
+                    <th className="text-right px-4 py-3 font-medium">Ações</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {filtered.map((s) => (
                     <tr key={s.id} className="hover:bg-secondary/50 transition">
                       <td className="px-4 py-3">
-                        <p className="font-medium">{s.name ?? "Unnamed"}</p>
+                        <p className="font-medium">{s.name ?? "Sem nome"}</p>
                         <p className="text-xs text-muted-foreground">{s.email}</p>
                       </td>
                       <td className="px-4 py-3">
@@ -207,7 +207,7 @@ export default function TeacherDashboardPage() {
                             {s.cefr_level}
                           </span>
                         ) : (
-                          <span className="text-muted-foreground text-xs">Not placed</span>
+                          <span className="text-muted-foreground text-xs">Não nivelado</span>
                         )}
                       </td>
                       <td className="px-4 py-3 font-mono">{s.total_xp}</td>
@@ -224,7 +224,7 @@ export default function TeacherDashboardPage() {
                       <td className="px-4 py-3 text-muted-foreground text-xs">
                         {s.last_active
                           ? new Date(s.last_active).toLocaleDateString()
-                          : "Never"}
+                          : "Nunca"}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <button
@@ -232,7 +232,7 @@ export default function TeacherDashboardPage() {
                           className="text-xs text-destructive hover:text-destructive/80 transition"
                           disabled={!s.cefr_level}
                         >
-                          Reset level
+                          Redefinir nível
                         </button>
                       </td>
                     </tr>

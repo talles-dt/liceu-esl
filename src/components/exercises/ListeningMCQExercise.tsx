@@ -54,7 +54,7 @@ export default function ListeningMCQExercise({
     <div className="space-y-6">
       {/* Audio player */}
       <div className="bg-card border border-border rounded-xl p-6 text-center">
-        <p className="text-sm text-muted-foreground mb-4">Listen to the audio, then answer the question below.</p>
+        <p className="text-sm text-muted-foreground mb-4">Ouca o audio e responda a pergunta abaixo.</p>
         <button
           onClick={togglePlay}
           disabled={!audioUrl}
@@ -66,7 +66,7 @@ export default function ListeningMCQExercise({
           )}
         >
           {isPlaying ? <Pause size={20} /> : <Volume2 size={20} />}
-          {isPlaying ? "Pause" : "Play audio"}
+          {isPlaying ? "Pausar" : "Reproduzir audio"}
         </button>
       </div>
 
@@ -132,7 +132,7 @@ export default function ListeningMCQExercise({
       {submitted && content.explanation && (
         <div className="bg-secondary rounded-lg p-4 text-sm">
           <p className="font-medium mb-1">
-            {selected === content.correctIndex ? "✓ Correct!" : "✗ Incorrect"}
+            {selected === content.correctIndex ? "✓ Correto!" : "✗ Incorreto"}
           </p>
           <p className="text-muted-foreground">{content.explanation}</p>
         </div>
@@ -143,7 +143,7 @@ export default function ListeningMCQExercise({
           onClick={onSubmit}
           className="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition"
         >
-          Submit answer
+          Enviar resposta
         </button>
       )}
     </div>

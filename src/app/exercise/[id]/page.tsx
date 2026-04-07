@@ -65,7 +65,7 @@ export default function ExercisePage({ params }: { params: Promise<{ id: string 
         {/* Header */}
         <div className="flex items-center justify-between">
           <Link href="/dashboard" className="text-muted-foreground hover:text-foreground transition text-sm">
-            ← Back to dashboard
+            ← Voltar ao painel
           </Link>
           <div className="flex items-center gap-2">
             <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs font-semibold rounded-full uppercase">
@@ -90,7 +90,7 @@ export default function ExercisePage({ params }: { params: Promise<{ id: string 
                 {result.correct ? "🎉" : "💪"}
               </span>
               <div>
-                <p className="font-semibold">{result.correct ? "Well done!" : "Keep practicing!"}</p>
+                <p className="font-semibold">{result.correct ? "Parabéns!" : "Continue praticando!"}</p>
                 {result.xpEarned > 0 && (
                   <p className="text-primary font-bold">+{result.xpEarned} XP</p>
                 )}
@@ -104,13 +104,13 @@ export default function ExercisePage({ params }: { params: Promise<{ id: string 
                 onClick={() => setResult(null)}
                 className="flex-1 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition text-sm"
               >
-                Try another
+                Tentar outro
               </button>
               <Link
                 href="/dashboard"
                 className="flex-1 py-2 bg-primary text-primary-foreground text-center rounded-lg hover:bg-primary/90 transition text-sm font-medium"
               >
-                Dashboard
+                Painel
               </Link>
             </div>
           </div>

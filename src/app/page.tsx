@@ -11,19 +11,18 @@ export default function Home() {
         <div className="relative z-10 max-w-4xl space-y-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-xs font-medium text-primary">
             <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-            Now in beta — Powered by Liceu Underground
+            Agora em beta — Powered by Liceu Underground
           </div>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight leading-[0.9]">
-            Level up
+            Evolua
             <br />
-            <span className="text-primary">your language.</span>
+            <span className="text-primary">seu inglês.</span>
           </h1>
 
           <p className="text-xl md:text-2xl text-foreground-muted font-light max-w-2xl mx-auto leading-relaxed">
-            AI-powered ESL training built for Brazilian professionals.
-            CEFR-aligned exercises, adaptive placement, and a tutor that
-            actually knows your level.
+            Treinamento de ESL com IA para profissionais brasileiros. Exercícios alinhados ao CEFR, nivelamento adaptativo e um tutor que
+            realmente conhece seu nível.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
@@ -31,18 +30,18 @@ export default function Home() {
               href="/onboarding"
               className="px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition text-lg neon-glow"
             >
-              Take the Placement Test — Free
+              Faça o Teste de Nivelamento — Grátis
             </Link>
             <a
               href="#how-it-works"
               className="px-8 py-4 bg-secondary text-secondary-foreground font-semibold rounded-xl hover:bg-secondary/80 transition text-lg"
             >
-              Learn more
+              Saiba mais
             </a>
           </div>
 
           <p className="text-xs text-muted-foreground">
-            No credit card required. Find your CEFR level in 5 minutes.
+            Não precisa de cartão de crédito. Descubra seu nível CEFR em 5 minutos.
           </p>
         </div>
 
@@ -66,24 +65,24 @@ export default function Home() {
       <section className="py-16 border-y border-border bg-background-muted">
         <div className="max-w-container mx-auto px-4 text-center space-y-6">
           <p className="text-sm text-muted-foreground uppercase tracking-widest font-medium">
-            From the makers of Liceu Underground
+            Dos criadores do Liceu Underground
           </p>
           <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 text-muted-foreground">
             <div className="text-center">
               <p className="text-3xl font-bold text-foreground">100%</p>
-              <p className="text-xs mt-1">AI-Generated Content</p>
+              <p className="text-xs mt-1">Conteúdo Gerado por IA</p>
             </div>
             <div className="text-center">
               <p className="text-3xl font-bold text-foreground">CEFR</p>
-              <p className="text-xs mt-1">Aligned A1–C2</p>
+              <p className="text-xs mt-1">Alinhado A1–C2</p>
             </div>
             <div className="text-center">
               <p className="text-3xl font-bold text-foreground">24/7</p>
-              <p className="text-xs mt-1">AI Tutor Available</p>
+              <p className="text-xs mt-1">Tutor IA Disponível</p>
             </div>
             <div className="text-center">
               <p className="text-3xl font-bold text-foreground">R$99</p>
-              <p className="text-xs mt-1">/month Pro Plan</p>
+              <p className="text-xs mt-1">/mês Plano Pro</p>
             </div>
           </div>
         </div>
@@ -94,11 +93,11 @@ export default function Home() {
         <div className="max-w-container mx-auto space-y-16">
           <div className="text-center space-y-4">
             <h2 className="text-3xl md:text-4xl font-display font-bold">
-              How it <span className="text-primary">works</span>
+              Como <span className="text-primary">funciona</span>
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              Four steps from zero to fluent. No paperwork, no scheduling, no
-              waiting.
+              Quatro passos do zero à fluência. Sem burocracia, sem agendamento, sem
+              espera.
             </p>
           </div>
 
@@ -106,26 +105,26 @@ export default function Home() {
             {[
               {
                 step: "01",
-                title: "Take the Placement Test",
-                desc: "15 adaptive questions powered by Claude. We find your exact CEFR level — A1 through C2. Takes 5 minutes. Free.",
+                title: "Faça o Teste de Nivelamento",
+                desc: "15 perguntas adaptativas com Claude. Encontramos seu nível exato do CEFR — de A1 a C2. Leva 5 minutos. Grátis.",
                 icon: "🎯",
               },
               {
                 step: "02",
-                title: "Get Your Level",
-                desc: "See your CEFR level instantly. Your personalized exercise queue is generated and ready to go.",
+                title: "Descubra Seu Nível",
+                desc: "Veja seu nível CEFR instantaneamente. Sua fila personalizada de exercícios é gerada e está pronta para começar.",
                 icon: "📊",
               },
               {
                 step: "03",
-                title: "Practice Daily",
-                desc: "MCQ, fill-in-the-blank, vocabulary, and listening exercises. Earn XP, build streaks, climb the leaderboard.",
+                title: "Pratique Diariamente",
+                desc: "Exercícios de múltipla escolha, preencher lacunas, vocabulário e compreensão auditiva. Ganhe XP, mantenha sequências, suba no ranking.",
                 icon: "⚡",
               },
               {
                 step: "04",
-                title: "Talk to Leo",
-                desc: "Our AI tutor adapts to your level. Practice conversation, ask grammar questions, get real-time feedback.",
+                title: "Converse com o Leo",
+                desc: "Nosso tutor de IA se adapta ao seu nível. Pratique conversação, tire dúvidas de gramática e receba feedback em tempo real.",
                 icon: "🤖",
               },
             ].map((item) => (
@@ -135,7 +134,7 @@ export default function Home() {
               >
                 <div className="text-4xl">{item.icon}</div>
                 <div className="text-xs text-primary font-mono font-bold tracking-widest">
-                  STEP {item.step}
+                  PASSO {item.step}
                 </div>
                 <h3 className="text-lg font-semibold">{item.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
@@ -152,11 +151,11 @@ export default function Home() {
         <div className="max-w-container mx-auto space-y-16">
           <div className="text-center space-y-4">
             <h2 className="text-3xl md:text-4xl font-display font-bold">
-              Built for <span className="text-primary">real progress</span>
+              Feito para <span className="text-primary">resultados reais</span>
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              Not another gamified kindergarten. This is serious English training
-              for adults who need results.
+              Não é mais um app infantilizado. Este é um treinamento sério de inglês
+              para adultos que precisam de resultados.
             </p>
           </div>
 
@@ -164,33 +163,33 @@ export default function Home() {
             {[
               {
                 icon: "🧠",
-                title: "AI-Generated Exercises",
-                desc: "Claude generates exercises tailored to your level and topic. Always fresh, always relevant.",
+                title: "Exercícios Gerados por IA",
+                desc: "O Claude gera exercícios personalizados para seu nível e tópico. Sempre novos, sempre relevantes.",
               },
               {
                 icon: "📈",
-                title: "Adaptive Placement",
-                desc: "15 questions that find your exact CEFR level. No guessing, no wasting time on content that's too easy or too hard.",
+                title: "Nivelamento Adaptativo",
+                desc: "15 perguntas que encontram seu nível exato do CEFR. Sem chute, sem perder tempo com conteúdo muito fácil ou muito difícil.",
               },
               {
                 icon: "🔥",
-                title: "Streaks & Leaderboards",
-                desc: "Daily streaks, XP system, weekly leaderboards. The kind of motivation that actually sticks.",
+                title: "Sequências e Rankings",
+                desc: "Sequências diárias, sistema de XP, rankings semanais. O tipo de motivação que realmente funciona.",
               },
               {
                 icon: "🎧",
-                title: "Listening Practice",
-                desc: "Native-quality audio generated by OpenAI TTS. Train your ear with real-world English at your level.",
+                title: "Compreensão Auditiva",
+                desc: "Áudio de qualidade nativa gerado por OpenAI TTS. Treine seu ouvido com inglês do mundo real no seu nível.",
               },
               {
                 icon: "🤖",
-                title: "Leo — AI Tutor",
-                desc: "A conversational tutor that knows your CEFR level. Practice anytime, get corrections that actually help.",
+                title: "Leo — Tutor de IA",
+                desc: "Um tutor conversacional que conhece seu nível CEFR. Pratique a qualquer hora, receba correções que realmente ajudam.",
               },
               {
                 icon: "📅",
-                title: "Live Classes",
-                desc: "Book 1-on-1 sessions with your teacher via Cal.com. AI generates, humans verify — the best of both worlds.",
+                title: "Aulas ao Vivo",
+                desc: "Agende sessões individuais com seu professor via Cal.com. A IA gera, humanos revisam — o melhor dos dois mundos.",
               },
             ].map((feature) => (
               <div
@@ -213,11 +212,11 @@ export default function Home() {
         <div className="max-w-container mx-auto space-y-12">
           <div className="text-center space-y-4">
             <h2 className="text-3xl md:text-4xl font-display font-bold">
-              Why <span className="text-primary">Lexio</span>?
+              Por que <span className="text-primary">Lexio</span>?
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              We're not Duolingo for adults. We're not a boring textbook. We're
-              something in between.
+              Não somos o Duolingo para adultos. Não somos um livro chato. Somos
+              algo entre os dois.
             </p>
           </div>
 
@@ -226,7 +225,7 @@ export default function Home() {
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left py-4 px-4 font-medium text-muted-foreground">
-                    Feature
+                    Recurso
                   </th>
                   <th className="text-center py-4 px-4 font-bold text-primary">
                     Lexio
@@ -235,20 +234,20 @@ export default function Home() {
                     Duolingo
                   </th>
                   <th className="text-center py-4 px-4 font-medium text-muted-foreground">
-                    Traditional ESL
+                    ESL Tradicional
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {[
-                  ["CEFR-aligned content", "✓", "✗", "✓"],
-                  ["AI-generated exercises", "✓", "✗", "✗"],
-                  ["AI conversational tutor", "✓", "✗", "✗"],
-                  ["Teacher oversight", "✓", "✗", "✓"],
-                  ["Professional/Business English", "✓", "✗", "△"],
-                  ["Adult-focused UX", "✓", "✗", "△"],
-                  ["Adaptive placement test", "✓", "✓", "△"],
-                  ["Streaks & gamification", "✓", "✓", "✗"],
+                  ["Conteúdo alinhado ao CEFR", "✓", "✗", "✓"],
+                  ["Exercícios gerados por IA", "✓", "✗", "✗"],
+                  ["Tutor conversacional de IA", "✓", "✗", "✗"],
+                  ["Supervisão de professores", "✓", "✗", "✓"],
+                  ["Inglês profissional/negócios", "✓", "✗", "△"],
+                  ["UX focado em adultos", "✓", "✗", "△"],
+                  ["Teste de nivelamento adaptativo", "✓", "✓", "△"],
+                  ["Sequências e gamificação", "✓", "✓", "✗"],
                 ].map(([feature, lexio, duo, trad]) => (
                   <tr key={feature} className="hover:bg-secondary/30 transition">
                     <td className="py-3 px-4">{feature}</td>
@@ -272,7 +271,7 @@ export default function Home() {
         <div className="max-w-container mx-auto space-y-12">
           <div className="text-center space-y-4">
             <h2 className="text-3xl md:text-4xl font-display font-bold">
-              What our <span className="text-primary">students</span> say
+              O que nossos <span className="text-primary">alunos</span> dizem
             </h2>
           </div>
 
@@ -280,21 +279,21 @@ export default function Home() {
             {[
               {
                 quote:
-                  "Finally, something that doesn't feel like a children's game. The exercises are actually relevant to my job.",
+                  "Finalmente, algo que não parece um jogo de criança. Os exercícios são realmente relevantes para o meu trabalho.",
                 name: "Beta Tester",
-                role: "IT Professional",
+                role: "Profissional de TI",
               },
               {
                 quote:
-                  "The AI tutor is genuinely good. It adjusts to my level and doesn't waste my time with stuff I already know.",
+                  "O tutor de IA é realmente bom. Ele se adapta ao meu nível e não perde meu tempo com coisas que eu já sei.",
                 name: "Beta Tester",
-                role: "Finance Analyst",
+                role: "Analista Financeiro",
               },
               {
                 quote:
-                  "I've tried every app out there. Lexio is the first one where I feel like I'm actually making progress.",
+                  "Já testei todos os apps existentes. Lexio é o primeiro onde sinto que estou realmente progredindo.",
                 name: "Beta Tester",
-                role: "Healthcare Worker",
+                role: "Profissional da Saúde",
               },
             ].map((t, i) => (
               <div
@@ -320,35 +319,35 @@ export default function Home() {
         <div className="max-w-3xl mx-auto space-y-12">
           <div className="text-center space-y-4">
             <h2 className="text-3xl md:text-4xl font-display font-bold">
-              Frequently <span className="text-primary">asked</span>
+              Perguntas <span className="text-primary">frequentes</span>
             </h2>
           </div>
 
           <div className="space-y-4">
             {[
               {
-                q: "What is the CEFR?",
-                a: "The Common European Framework of Reference for Languages. It's the international standard for describing language ability, from A1 (beginner) to C2 (mastery). All our content is calibrated to these levels.",
+                q: "O que é o CEFR?",
+                a: "O Quadro Europeu Comum de Referência para Línguas. É o padrão internacional para descrever a proficiência em idiomas, de A1 (iniciante) a C2 (domínio). Todo nosso conteúdo é calibrado para esses níveis.",
               },
               {
-                q: "Is the placement test really free?",
-                a: "Yes. Take it anytime, no account required. It's 15 adaptive questions and takes about 5 minutes. We show your result immediately — it's our way of letting you try before you commit.",
+                q: "O teste de nivelamento é realmente grátis?",
+                a: "Sim. Faça a qualquer hora, sem precisar de conta. São 15 perguntas adaptativas e leva cerca de 5 minutos. Mostramos seu resultado imediatamente — é nossa forma de deixar você experimentar antes de se comprometer.",
               },
               {
-                q: "How is this different from Duolingo?",
-                a: "Duolingo is designed for everyone, which means it's optimized for no one. Lexio is built specifically for Brazilian adults who need professional English. Our content is AI-generated, CEFR-aligned, and includes a real AI tutor that adapts to your level.",
+                q: "Como isso é diferente do Duolingo?",
+                a: "O Duolingo é feito para todo mundo, o que significa que não é otimizado para ninguém. O Lexio é construído especificamente para adultos brasileiros que precisam de inglês profissional. Nosso conteúdo é gerado por IA, alinhado ao CEFR e inclui um tutor de IA real que se adapta ao seu nível.",
               },
               {
-                q: "Can I cancel my subscription anytime?",
-                a: "Yes. Manage your subscription directly through Stripe's customer portal. No hidden fees, no cancellation calls, no retention tactics.",
+                q: "Posso cancelar minha assinatura a qualquer momento?",
+                a: "Sim. Gerencie sua assinatura diretamente pelo portal do cliente da Stripe. Sem taxas ocultas, sem ligações de cancelamento, sem táticas de retenção.",
               },
               {
-                q: "Who creates the exercises?",
-                a: "Claude (Anthropic's AI) generates exercises based on topic, level, and skill. Human teachers review and approve every exercise before it reaches students. Best of both worlds.",
+                q: "Quem cria os exercícios?",
+                a: "O Claude (IA da Anthropic) gera exercícios com base no tópico, nível e habilidade. Professores humanos revisam e aprovam cada exercício antes de chegar aos alunos. O melhor dos dois mundos.",
               },
               {
-                q: "What's Leo?",
-                a: "Leo is our AI English tutor powered by Claude. He knows your CEFR level and adapts his vocabulary and corrections accordingly. Available 24/7 for conversation practice, grammar questions, and real-world English help.",
+                q: "O que é o Leo?",
+                a: "Leo é nosso tutor de inglês com IA, alimentado pelo Claude. Ele conhece seu nível CEFR e adapta seu vocabulário e correções de acordo. Disponível 24/7 para prática de conversação, dúvidas de gramática e ajuda com inglês do mundo real.",
               },
             ].map((faq, i) => (
               <details
@@ -375,10 +374,10 @@ export default function Home() {
         <div className="max-w-container mx-auto text-center space-y-12">
           <div className="space-y-4">
             <h2 className="text-3xl md:text-4xl font-display font-bold">
-              Simple <span className="text-primary">pricing</span>
+              Preço <span className="text-primary">simples</span>
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              Start free. Upgrade when you're ready.
+              Comece grátis. Faça upgrade quando estiver pronto.
             </p>
           </div>
 
@@ -386,81 +385,81 @@ export default function Home() {
             {/* Free */}
             <div className="bg-card border border-border rounded-xl p-8 space-y-6 text-left">
               <div>
-                <h3 className="text-lg font-semibold">Free</h3>
+                <h3 className="text-lg font-semibold">Grátis</h3>
                 <p className="text-4xl font-bold mt-2">
                   R$0
                   <span className="text-base font-normal text-muted-foreground">
-                    /forever
+                    /para sempre
                   </span>
                 </p>
               </div>
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-center gap-2">
-                  <span className="text-success">✓</span> CEFR Placement Test
+                  <span className="text-success">✓</span> Teste de Nivelamento CEFR
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-success">✓</span> 3 AI Tutor messages/day
+                  <span className="text-success">✓</span> 3 mensagens com o Tutor IA/dia
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-muted-foreground">✗</span> Full exercise library
+                  <span className="text-muted-foreground">✗</span> Biblioteca completa de exercícios
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-muted-foreground">✗</span> Streaks & leaderboards
+                  <span className="text-muted-foreground">✗</span> Sequências e rankings
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-muted-foreground">✗</span> Progress tracking
+                  <span className="text-muted-foreground">✗</span> Acompanhamento de progresso
                 </li>
               </ul>
               <Link
                 href="/onboarding"
                 className="block w-full py-3 bg-secondary text-secondary-foreground font-semibold rounded-xl hover:bg-secondary/80 transition text-center"
               >
-                Take the Placement Test
+                Faça o Teste de Nivelamento
               </Link>
             </div>
 
             {/* Pro */}
             <div className="bg-card border-2 border-primary/30 rounded-xl p-8 space-y-6 text-left relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
-                Most Popular
+                Mais Popular
               </div>
               <div>
                 <h3 className="text-lg font-semibold">Pro</h3>
                 <p className="text-4xl font-bold mt-2">
                   R$99
                   <span className="text-base font-normal text-muted-foreground">
-                    /month
+                    /mês
                   </span>
                 </p>
               </div>
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-center gap-2">
-                  <span className="text-success">✓</span> Full exercise library
+                  <span className="text-success">✓</span> Biblioteca completa de exercícios
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-success">✓</span> Unlimited AI Tutor
+                  <span className="text-success">✓</span> Tutor IA ilimitado
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-success">✓</span> Streaks, XP & leaderboards
+                  <span className="text-success">✓</span> Sequências, XP e rankings
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-success">✓</span> Progress tracking
+                  <span className="text-success">✓</span> Acompanhamento de progresso
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-success">✓</span> Teacher assignments
+                  <span className="text-success">✓</span> Tarefas do professor
                 </li>
               </ul>
               <Link
                 href="/auth/login"
                 className="block w-full py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition text-center neon-glow"
               >
-                Start Learning Today
+                Comece a Aprender Hoje
               </Link>
             </div>
           </div>
 
           <p className="text-xs text-muted-foreground">
-            Cancel anytime via Stripe customer portal. No questions asked.
+            Cancele a qualquer momento pelo portal do cliente da Stripe. Sem perguntas.
           </p>
         </div>
       </section>
@@ -469,17 +468,17 @@ export default function Home() {
       <section className="py-24 px-4">
         <div className="max-w-2xl mx-auto text-center space-y-6">
           <h2 className="text-3xl md:text-5xl font-display font-bold">
-            Ready to <span className="text-primary">level up</span>?
+            Pronto para <span className="text-primary">evoluir</span>?
           </h2>
           <p className="text-lg text-muted-foreground max-w-lg mx-auto">
-            Take the free placement test. Find your level. Start practicing in
-            under 5 minutes.
+            Faça o teste de nivelamento grátis. Descubra seu nível. Comece a praticar em
+            menos de 5 minutos.
           </p>
           <Link
             href="/onboarding"
             className="inline-block px-10 py-4 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition text-lg neon-glow"
           >
-            Start for Free
+            Comece Grátis
           </Link>
         </div>
       </section>
@@ -493,20 +492,20 @@ export default function Home() {
                 Lexio Underground
               </h4>
               <p className="text-sm text-muted-foreground">
-                AI-powered ESL training for Brazilian professionals.
+                Treinamento de ESL com IA para profissionais brasileiros.
                 <br />
-                From the makers of Liceu Underground.
+                Dos criadores do Liceu Underground.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-2">Product</h4>
+              <h4 className="font-semibold mb-2">Produto</h4>
               <ul className="space-y-1 text-sm text-muted-foreground">
                 <li>
                   <Link
                     href="/onboarding"
                     className="hover:text-foreground transition"
                   >
-                    Placement Test
+                    Teste de Nivelamento
                   </Link>
                 </li>
                 <li>
@@ -514,7 +513,7 @@ export default function Home() {
                     href="/auth/login"
                     className="hover:text-foreground transition"
                   >
-                    Sign In
+                    Entrar
                   </Link>
                 </li>
                 <li>
@@ -522,7 +521,7 @@ export default function Home() {
                     href="/billing"
                     className="hover:text-foreground transition"
                   >
-                    Pricing
+                    Preços
                   </Link>
                 </li>
               </ul>
@@ -535,7 +534,7 @@ export default function Home() {
                     href="/terms"
                     className="hover:text-foreground transition"
                   >
-                    Terms of Use
+                    Termos de Uso
                   </Link>
                 </li>
                 <li>
@@ -543,7 +542,7 @@ export default function Home() {
                     href="/privacy"
                     className="hover:text-foreground transition"
                   >
-                    Privacy Policy
+                    Política de Privacidade
                   </Link>
                 </li>
                 <li>
@@ -551,14 +550,14 @@ export default function Home() {
                     href="mailto:talles@oliceu.com"
                     className="hover:text-foreground transition"
                   >
-                    Contact
+                    Contato
                   </a>
                 </li>
               </ul>
             </div>
           </div>
           <div className="border-t border-border pt-8 text-center text-xs text-muted-foreground">
-            <p>© {new Date().getFullYear()} Lexio Underground — by Liceu Underground. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Lexio Underground — by Liceu Underground. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>

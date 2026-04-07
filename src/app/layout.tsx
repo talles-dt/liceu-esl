@@ -16,17 +16,17 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: {
-    default: "Lexio Underground — Level up your language.",
+    default: "Lexio Underground — Evolua seu idioma.",
     template: "%s | Lexio Underground",
   },
   description:
-    "The gamified, AI-powered language training platform from the makers of Liceu Underground. CEFR-aligned exercises, AI tutor, streaks, leaderboards.",
+    "A plataforma gamificada de treinamento de idiomas com IA dos criadores do Liceu Underground. Exercícios alinhados ao CEFR, tutor de IA, sequências, classificações.",
   openGraph: {
     type: "website",
     locale: "pt_BR",
     siteName: "Lexio Underground",
-    title: "Lexio Underground — Level up your language.",
-    description: "AI-powered, gamified ESL training for Brazilian professionals.",
+    title: "Lexio Underground — Evolua seu idioma.",
+    description: "Treinamento ESL gamificado e com IA para profissionais brasileiros.",
   },
   icons: {
     icon: "/favicon.ico",

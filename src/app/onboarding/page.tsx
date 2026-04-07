@@ -16,66 +16,66 @@ type Phase = "intro" | "testing" | "report";
 
 const LEVEL_DESCRIPTIONS: Record<string, { label: string; desc: string; canDo: string[] }> = {
   A1: {
-    label: "Beginner",
-    desc: "You understand and use familiar everyday expressions and very basic phrases aimed at concrete needs. You can introduce yourself and ask/answer simple personal questions.",
+    label: "Iniciante",
+    desc: "Você compreende e usa expressões cotidianas familiares e frases muito básicas voltadas a necessidades concretas. Pode se apresentar e fazer/responder perguntas pessoais simples.",
     canDo: [
-      "Understand basic greetings and introductions",
-      "Use simple phrases for concrete needs",
-      "Interact in a basic way if the other person speaks slowly",
+      "Compreender saudações e apresentações básicas",
+      "Usar frases simples para necessidades concretas",
+      "Interagir de forma básica se a outra pessoa falar devagar",
     ],
   },
   A2: {
-    label: "Elementary",
-    desc: "You understand sentences and frequently used expressions related to basic personal and family information, shopping, local geography, and employment.",
+    label: "Elementar",
+    desc: "Você compreende frases e expressões frequentemente usadas relacionadas a informações pessoais e familiares básicas, compras, geografia local e emprego.",
     canDo: [
-      "Communicate about routine tasks requiring direct exchange of information",
-      "Describe in simple terms aspects of your background and environment",
-      "Handle short social exchanges",
+      "Comunicar-se sobre tarefas rotineiras que exigem troca direta de informação",
+      "Descrever de forma simples aspectos da sua formação e ambiente",
+      "Manter breves conversas sociais",
     ],
   },
   B1: {
-    label: "Intermediate",
-    desc: "You understand the main points of clear standard input on familiar matters regularly encountered in work, school, and leisure. You can deal with most travel situations.",
+    label: "Intermediário",
+    desc: "Você compreende os pontos principais de uma entrada clara e padrão sobre assuntos familiares encontrados regularmente no trabalho, escola e lazer. Consegue lidar com a maioria das situações de viagem.",
     canDo: [
-      "Produce simple connected text on familiar topics",
-      "Describe experiences, events, dreams, and ambitions",
-      "Give reasons and explanations for opinions and plans",
+      "Produzir texto simples e coeso sobre tópicos familiares",
+      "Descrever experiências, eventos, sonhos e ambições",
+      "Dar razões e explicações para opiniões e planos",
     ],
   },
   B2: {
-    label: "Upper Intermediate",
-    desc: "You understand the main ideas of complex text on both concrete and abstract topics, including technical discussions in your field. You interact with fluency and spontaneity.",
+    label: "Intermediário Superior",
+    desc: "Você compreende as ideias principais de textos complexos sobre tópicos concretos e abstratos, incluindo discussões técnicas na sua área. Interage com fluência e espontaneidade.",
     canDo: [
-      "Interact with native speakers without strain",
-      "Produce clear, detailed text on a wide range of subjects",
-      "Explain a viewpoint with advantages and disadvantages",
+      "Interagir com falantes nativos sem esforço",
+      "Produzir texto claro e detalhado sobre uma ampla gama de assuntos",
+      "Explicar um ponto de vista com vantagens e desvantagens",
     ],
   },
   C1: {
-    label: "Advanced",
-    desc: "You understand a wide range of demanding, longer texts and recognize implicit meaning. You express yourself fluently and spontaneously without obvious searching for expressions.",
+    label: "Avançado",
+    desc: "Você compreende uma ampla gama de textos longos e exigentes, e reconhece significados implícitos. Expressa-se de forma fluente e espontânea sem procurar expressões de forma óbvia.",
     canDo: [
-      "Use language flexibly for social, academic, and professional purposes",
-      "Produce clear, well-structured, detailed text on complex subjects",
-      "Show controlled use of organizational patterns and connectors",
+      "Usar o idioma de forma flexível para fins sociais, acadêmicos e profissionais",
+      "Produzir texto claro, bem estruturado e detalhado sobre assuntos complexos",
+      "Demonstrar uso controlado de padrões organizacionais e conectores",
     ],
   },
   C2: {
-    label: "Proficiency",
-    desc: "You understand with ease virtually everything heard or read. You summarize information from different spoken and written sources, reconstructing arguments coherently.",
+    label: "Proficiência",
+    desc: "Você compreende com facilidade virtualmente tudo o que ouve ou lê. Resume informações de diferentes fontes faladas e escritas, reconstruindo argumentos de forma coerente.",
     canDo: [
-      "Express yourself spontaneously, very fluently, and precisely",
-      "Differentiate finer shades of meaning even in complex situations",
-      "Understand idiomatic expressions and colloquialisms with ease",
+      "Expressar-se espontaneamente, de forma muito fluente e precisa",
+      "Diferenciar nuances mais sutis de significado mesmo em situações complexas",
+      "Compreender expressões idiomáticas e coloquialismos com facilidade",
     ],
   },
 };
 
 const SKILL_LABELS: Record<string, string> = {
-  grammar: "Grammar",
-  vocabulary: "Vocabulary",
-  reading: "Reading",
-  pragmatics: "Pragmatic Usage",
+  grammar: "Gramática",
+  vocabulary: "Vocabulário",
+  reading: "Leitura",
+  pragmatics: "Uso Pragmático",
 };
 
 export default function OnboardingPage() {
@@ -167,14 +167,14 @@ export default function OnboardingPage() {
         <div className="w-full max-w-2xl space-y-8 text-center">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-xs font-medium text-primary mb-6">
-              🎯 Free CEFR Assessment
+              Avaliação CEFR Gratuita
             </div>
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
-              Find Your English Level
+              Descubra Seu Nível de Inglês
             </h1>
             <p className="text-lg text-muted-foreground max-w-lg mx-auto">
-              60 comprehensive questions across grammar, vocabulary, reading,
-              and pragmatics. Takes about 20 minutes.
+              60 perguntas abrangentes sobre gramática, vocabulário, leitura
+              e uso pragmático. Leva cerca de 20 minutos.
             </p>
           </div>
 
@@ -185,17 +185,17 @@ export default function OnboardingPage() {
                 onClick={startTest}
                 className="ml-2 underline hover:no-underline"
               >
-                Try again
+                Tentar novamente
               </button>
             </div>
           )}
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto">
             {[
-              { icon: "📝", label: "60 Questions" },
-              { icon: "⏱️", label: "~20 Minutes" },
-              { icon: "📊", label: "A1–C2 Result" },
-              { icon: "📋", label: "Full Report" },
+              { icon: "📝", label: "60 Perguntas" },
+              { icon: "⏱️", label: "~20 Minutos" },
+              { icon: "📊", label: "Resultado A1–C2" },
+              { icon: "📋", label: "Relatório Completo" },
             ].map((item) => (
               <div
                 key={item.label}
@@ -208,12 +208,12 @@ export default function OnboardingPage() {
           </div>
 
           <div className="bg-card border border-border rounded-xl p-4 text-left text-sm text-muted-foreground space-y-2 max-w-md mx-auto">
-            <p className="font-medium text-foreground">The test covers:</p>
+            <p className="font-medium text-foreground">O teste cobre:</p>
             <div className="grid grid-cols-2 gap-2">
-              <span>• Grammar (A1–C2)</span>
-              <span>• Vocabulary (A1–C2)</span>
-              <span>• Reading (B1–C1)</span>
-              <span>• Pragmatic Usage (B2–C2)</span>
+              <span>• Gramática (A1–C2)</span>
+              <span>• Vocabulário (A1–C2)</span>
+              <span>• Leitura (B1–C1)</span>
+              <span>• Uso Pragmático (B2–C2)</span>
             </div>
           </div>
 
@@ -222,13 +222,13 @@ export default function OnboardingPage() {
             disabled={loading}
             className="px-10 py-4 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition text-lg disabled:opacity-50 neon-glow"
           >
-            {loading ? "Generating your test..." : "Start Placement Test"}
+            {loading ? "Gerando seu teste..." : "Iniciar Teste de Nivelamento"}
           </button>
 
           <p className="text-xs text-muted-foreground">
-            Already have an account?{" "}
+            Já tem uma conta?{" "}
             <Link href="/auth/login" className="text-primary hover:underline">
-              Sign in
+              Entrar
             </Link>
           </p>
         </div>
@@ -248,7 +248,7 @@ export default function OnboardingPage() {
           {/* Progress bar */}
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>
-              Question {currentQ + 1} of {questions.length}
+              Pergunta {currentQ + 1} de {questions.length}
             </span>
             <div className="flex items-center gap-2">
               <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs font-semibold rounded">
@@ -295,7 +295,7 @@ export default function OnboardingPage() {
             href="/"
             className="block text-center text-muted-foreground hover:text-foreground transition text-sm"
           >
-            ← Back to home
+            ← Voltar ao início
           </Link>
         </div>
       </main>
@@ -325,22 +325,22 @@ export default function OnboardingPage() {
           <div className="text-center space-y-4">
             <div className="text-5xl">🎉</div>
             <h1 className="text-3xl md:text-4xl font-display font-bold">
-              Your CEFR Level:{" "}
+              Seu Nível CEFR:{" "}
               <span className="text-primary">{overallLevel}</span>
             </h1>
             <p className="text-lg font-medium text-foreground-muted">
-              {levelInfo.label} — {overallAccuracy}% overall accuracy
+              {levelInfo.label} — {overallAccuracy}% de precisão geral
             </p>
           </div>
 
           {/* Level description */}
           <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-            <h2 className="text-lg font-semibold">What {overallLevel} means</h2>
+            <h2 className="text-lg font-semibold">O que {overallLevel} significa</h2>
             <p className="text-muted-foreground leading-relaxed">
               {levelInfo.desc}
             </p>
             <div className="space-y-2">
-              <p className="text-sm font-medium">You can:</p>
+              <p className="text-sm font-medium">Você consegue:</p>
               {levelInfo.canDo.map((item, i) => (
                 <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                   <span className="text-success mt-0.5">✓</span>
@@ -352,7 +352,7 @@ export default function OnboardingPage() {
 
           {/* CEFR scale visual */}
           <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-            <h2 className="text-lg font-semibold">CEFR Scale</h2>
+            <h2 className="text-lg font-semibold">Escala CEFR</h2>
             <div className="space-y-2">
               {levelOrder.map((lvl) => {
                 const data = levelBreakdown[lvl];
@@ -396,7 +396,7 @@ export default function OnboardingPage() {
 
           {/* Skill breakdown */}
           <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-            <h2 className="text-lg font-semibold">Skill Breakdown</h2>
+            <h2 className="text-lg font-semibold">Detalhamento por Habilidade</h2>
             <div className="space-y-3">
               {Object.entries(skillBreakdown).map(([skill, data]) => {
                 const pct = Math.round((data.correct / data.total) * 100);
@@ -426,19 +426,19 @@ export default function OnboardingPage() {
               href="/auth/login"
               className="block w-full py-4 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition text-center text-lg neon-glow"
             >
-              Create Account &amp; Start Learning
+              Criar Conta e Começar a Aprender
             </Link>
             <Link
               href="/"
               className="block w-full py-3 bg-secondary text-secondary-foreground font-semibold rounded-xl hover:bg-secondary/80 transition text-center"
             >
-              Back to Home
+              Voltar ao Início
             </Link>
           </div>
 
           <p className="text-center text-xs text-muted-foreground">
-            Create a free account to access personalized exercises, the AI tutor,
-            streaks, and progress tracking.
+            Crie uma conta gratuita para acessar exercícios personalizados, o tutor de IA,
+            sequências e acompanhamento de progresso.
           </p>
         </div>
       </main>

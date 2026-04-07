@@ -99,7 +99,7 @@ export default function VocabDragExercise({ content, submitted, onSelect, onSubm
       {/* Word bank */}
       <div className="bg-secondary rounded-lg p-4">
         <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide">
-          Drag words into the blanks (click a filled slot to remove)
+          Arraste as palavras para os espacos (clique em um espaco preenchido para remover)
         </p>
         <div
           className="flex flex-wrap gap-2"
@@ -123,11 +123,11 @@ export default function VocabDragExercise({ content, submitted, onSelect, onSubm
         <div className="bg-secondary rounded-lg p-4 text-sm">
           <p className="font-medium">
             {JSON.stringify(slots) === JSON.stringify(content.correctOrder)
-              ? "✓ Correct!"
-              : "✗ Incorrect"}
+              ? "✓ Correto!"
+              : "✗ Incorreto"}
           </p>
           <p className="text-muted-foreground mt-1">
-            Correct: {content.correctOrder.join(" → ")}
+            Correto: {content.correctOrder.join(" → ")}
           </p>
         </div>
       )}
@@ -137,7 +137,7 @@ export default function VocabDragExercise({ content, submitted, onSelect, onSubm
           onClick={onSubmit}
           className="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition"
         >
-          Submit answer
+          Enviar resposta
         </button>
       )}
     </div>

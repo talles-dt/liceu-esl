@@ -58,11 +58,11 @@ export default function FillBlankExercise({ content, submitted, onSelect, onSubm
         <div className="bg-secondary rounded-lg p-4 text-sm">
           <p className="font-medium mb-1">
             {answers.every((a, i) => a.toLowerCase().trim() === content.answers[i]?.toLowerCase().trim())
-              ? "✓ Correct!"
-              : "✗ Incorrect"}
+              ? "✓ Correto!"
+              : "✗ Incorreto"}
           </p>
           <p className="text-muted-foreground">
-            Answer: {content.answers.join(", ")}
+            Resposta: {content.answers.join(", ")}
           </p>
           {content.explanation && <p className="text-muted-foreground mt-1">{content.explanation}</p>}
         </div>
@@ -73,7 +73,7 @@ export default function FillBlankExercise({ content, submitted, onSelect, onSubm
           onClick={onSubmit}
           className="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition"
         >
-          Submit answer
+          Enviar resposta
         </button>
       )}
     </div>

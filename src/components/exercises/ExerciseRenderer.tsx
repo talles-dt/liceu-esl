@@ -78,6 +78,6 @@ export default function ExerciseRenderer({ exercise, onComplete }: Props) {
       );
 
     default:
-      return <p className="text-muted-foreground">Unknown exercise type.</p>;
+      return <p className="text-muted-foreground">Tipo de exercicio desconhecido.</p>;
   }
 }

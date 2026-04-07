@@ -114,42 +114,42 @@ export default async function AdminAnalyticsPage() {
   return (
     <main className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
-        <h1 className="text-2xl font-bold">Platform Analytics</h1>
+        <h1 className="text-2xl font-bold">Análises da Plataforma</h1>
 
         {/* Key Metrics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <MetricCard label="Total Users" value={totalUsers ?? 0} />
-          <MetricCard label="Active Subscribers" value={activeSubscribers ?? 0} />
+          <MetricCard label="Total de Usuários" value={totalUsers ?? 0} />
+          <MetricCard label="Assinantes Ativos" value={activeSubscribers ?? 0} />
           <MetricCard label="DAU" value={dau ?? 0} />
           <MetricCard label="WAU" value={wau ?? 0} />
           <MetricCard label="MAU" value={mau ?? 0} />
-          <MetricCard label="Conversion Rate" value={`${conversionRate.toFixed(1)}%`} />
-          <MetricCard label="New This Week" value={newThisWeek ?? 0} />
-          <MetricCard label="Exercises Today" value={exercisesToday ?? 0} />
+          <MetricCard label="Taxa de Conversão" value={`${conversionRate.toFixed(1)}%`} />
+          <MetricCard label="Novos Esta Semana" value={newThisWeek ?? 0} />
+          <MetricCard label="Exercícios Hoje" value={exercisesToday ?? 0} />
         </div>
 
         {/* Content Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <MetricCard label="Approved Exercises" value={approvedExercises ?? 0} />
-          <MetricCard label="Draft Exercises" value={draftExercises ?? 0} />
-          <MetricCard label="Total Completions" value={totalCompletions ?? 0} />
+          <MetricCard label="Exercícios Aprovados" value={approvedExercises ?? 0} />
+          <MetricCard label="Exercícios Rascunho" value={draftExercises ?? 0} />
+          <MetricCard label="Total de Conclusões" value={totalCompletions ?? 0} />
         </div>
 
         {/* Funnel */}
         <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-          <h2 className="text-lg font-semibold">Conversion Funnel</h2>
+          <h2 className="text-lg font-semibold">Funil de Conversão</h2>
           <div className="space-y-3">
-            <FunnelBar label="Total Users" count={totalUsers ?? 0} max={totalUsers ?? 1} />
-            <FunnelBar label="Completed Placement" count={placedUsers ?? 0} max={totalUsers ?? 1} />
-            <FunnelBar label="Active Subscribers" count={activeSubscribers ?? 0} max={totalUsers ?? 1} />
+            <FunnelBar label="Total de Usuários" count={totalUsers ?? 0} max={totalUsers ?? 1} />
+            <FunnelBar label="Concluíram Nivelamento" count={placedUsers ?? 0} max={totalUsers ?? 1} />
+            <FunnelBar label="Assinantes Ativos" count={activeSubscribers ?? 0} max={totalUsers ?? 1} />
           </div>
         </div>
 
         {/* Recent Activity */}
         <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-          <h2 className="text-lg font-semibold">Recent Signups</h2>
+          <h2 className="text-lg font-semibold">Inscrições Recentes</h2>
           <p className="text-muted-foreground text-sm">
-            {newThisWeek ?? 0} new users in the last 7 days
+            {newThisWeek ?? 0} novos usuários nos últimos 7 dias
           </p>
         </div>
       </div>

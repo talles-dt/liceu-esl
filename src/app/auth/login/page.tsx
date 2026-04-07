@@ -20,7 +20,7 @@ export default function LoginPage() {
         <div className="text-center space-y-4">
           <h1 className="text-3xl font-bold">Lexio Underground</h1>
           <p className="text-muted-foreground">
-            Environment not configured. Please set your Supabase credentials in <code className="bg-secondary px-1 py-0.5 rounded text-xs">.env.local</code>.
+            Ambiente não configurado. Defina suas credenciais do Supabase em <code className="bg-secondary px-1 py-0.5 rounded text-xs">.env.local</code>.
           </p>
         </div>
       </main>
@@ -45,7 +45,7 @@ export default function LoginPage() {
     if (error) {
       setError(error.message);
     } else {
-      setMessage("Check your email for the login link!");
+      setMessage("Verifique seu e-mail para o link de login!");
     }
     setLoading(false);
   };
@@ -66,11 +66,11 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold">Lexio Underground</h1>
-          <p className="text-muted-foreground mt-2">Level up your language.</p>
+          <p className="text-muted-foreground mt-2">Evolua seu idioma.</p>
         </div>
 
         <div className="bg-card border border-border rounded-xl p-6 space-y-6">
-          <h2 className="text-xl font-semibold text-center">Sign in</h2>
+          <h2 className="text-xl font-semibold text-center">Entrar</h2>
 
           {message && (
             <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg p-3 text-sm text-center">
@@ -89,7 +89,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
+              placeholder="seu@email.com"
               required
               className="w-full px-4 py-3 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
@@ -98,7 +98,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition disabled:opacity-50"
             >
-              {loading ? "Sending..." : "Send magic link"}
+              {loading ? "Enviando..." : "Enviar link mágico"}
             </button>
           </form>
 
@@ -107,7 +107,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-card px-2 text-muted-foreground">or</span>
+              <span className="bg-card px-2 text-muted-foreground">ou</span>
             </div>
           </div>
 
@@ -122,7 +122,7 @@ export default function LoginPage() {
               <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
               <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
-            Continue with Google
+            Continuar com o Google
           </button>
         </div>
       </div>

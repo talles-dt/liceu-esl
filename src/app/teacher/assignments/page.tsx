@@ -106,32 +106,32 @@ export default function AssignmentsPage() {
             onClick={() => router.push("/teacher")}
             className="text-muted-foreground hover:text-foreground transition text-sm"
           >
-            ← Back
+            ← Voltar
           </button>
-          <h1 className="text-2xl font-bold">Create Assignment</h1>
+          <h1 className="text-2xl font-bold">Criar Tarefa</h1>
         </div>
 
         {success && (
           <div className="bg-success/10 border border-success/20 text-success rounded-lg p-3 text-sm">
-            Assignment created! Redirecting...
+            Tarefa criada! Redirecionando...
           </div>
         )}
 
         {/* Title */}
         <div className="bg-card border border-border rounded-xl p-6 space-y-4">
           <label className="block">
-            <span className="text-sm font-medium mb-1 block">Title</span>
+            <span className="text-sm font-medium mb-1 block">Título</span>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Business Vocabulary - Week 1"
+              placeholder="Ex.: Vocabulário de Negócios - Semana 1"
               className="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </label>
 
           <label className="block">
-            <span className="text-sm font-medium mb-1 block">Due Date (optional)</span>
+            <span className="text-sm font-medium mb-1 block">Data de Entrega (opcional)</span>
             <input
               type="date"
               value={dueDate}
@@ -145,13 +145,13 @@ export default function AssignmentsPage() {
         <div className="bg-card border border-border rounded-xl p-6 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold">
-              Select Exercises ({selectedExercises.length} selected)
+              Selecionar Exercícios ({selectedExercises.length} selecionado{selectedExercises.length !== 1 ? "s" : ""})
             </h2>
           </div>
 
           {exercises.length === 0 ? (
             <p className="text-muted-foreground text-sm">
-              No approved exercises yet. Generate and approve some first.
+              Nenhum exercício aprovado ainda. Gere e aprove alguns primeiro.
             </p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-64 overflow-y-auto">
@@ -187,18 +187,18 @@ export default function AssignmentsPage() {
         <div className="bg-card border border-border rounded-xl p-6 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold">
-              Assign To ({selectedStudents.length}/{students.length} students)
+              Atribuir Para ({selectedStudents.length}/{students.length} aluno{students.length !== 1 ? "s" : ""})
             </h2>
             <button
               onClick={selectAllStudents}
               className="text-xs text-primary hover:text-primary/80 transition"
             >
-              Select all
+              Selecionar todos
             </button>
           </div>
 
           {students.length === 0 ? (
-            <p className="text-muted-foreground text-sm">No students yet.</p>
+            <p className="text-muted-foreground text-sm">Nenhum aluno ainda.</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-48 overflow-y-auto">
               {students.map((s) => (
@@ -217,7 +217,7 @@ export default function AssignmentsPage() {
                     className="accent-primary"
                   />
                   <div className="text-sm">
-                    <p className="font-medium">{s.name ?? "Unnamed"}</p>
+                    <p className="font-medium">{s.name ?? "Sem nome"}</p>
                     <p className="text-xs text-muted-foreground">{s.email}</p>
                   </div>
                 </label>
@@ -236,7 +236,7 @@ export default function AssignmentsPage() {
           }
           className="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition disabled:opacity-50"
         >
-          {submitting ? "Creating..." : `Assign to ${selectedStudents.length} student${selectedStudents.length !== 1 ? "s" : ""}`}
+          {submitting ? "Criando..." : `Atribuir a ${selectedStudents.length} aluno${selectedStudents.length !== 1 ? "s" : ""}`}
         </button>
       </div>
     </main>

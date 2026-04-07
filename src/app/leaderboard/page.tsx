@@ -67,16 +67,16 @@ export default async function LeaderboardPage() {
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center space-y-2">
           <h1 className="text-2xl font-bold flex items-center justify-center gap-2">
-            🏆 Weekly Leaderboard
+            🏆 Tabela de Classificação Semanal
           </h1>
           <p className="text-muted-foreground text-sm">
-            Week of {weekStart.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+            Semana de {weekStart.toLocaleDateString("pt-BR", { month: "short", day: "numeric" })}
           </p>
         </div>
 
         {userRank && userRank > 10 && (
           <div className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Your rank</span>
+            <span className="text-sm text-muted-foreground">Sua classificação</span>
             <div className="flex items-center gap-3">
               <span className="text-lg font-bold">#{userRank}</span>
               <span className="text-sm text-muted-foreground">{userXP} XP</span>
@@ -88,7 +88,7 @@ export default async function LeaderboardPage() {
           {sorted.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
               <p className="text-2xl mb-2">🏁</p>
-              <p>No XP earned this week yet. Start exercising!</p>
+              <p>Nenhum XP conquistado nesta semana ainda. Comece a praticar!</p>
             </div>
           ) : (
             <div className="divide-y divide-border">
@@ -108,9 +108,9 @@ export default async function LeaderboardPage() {
                       <span className="text-lg w-8 text-center">{medal}</span>
                       <div>
                         <p className="font-medium text-sm">
-                          {profile?.name ?? "Anonymous"}
+                          {profile?.name ?? "Anônimo"}
                           {isCurrentUser && (
-                            <span className="ml-2 text-xs text-primary font-normal">(you)</span>
+                            <span className="ml-2 text-xs text-primary font-normal">(você)</span>
                           )}
                         </p>
                         {profile?.cefr_level && (
@@ -129,7 +129,7 @@ export default async function LeaderboardPage() {
         </div>
 
         <p className="text-center text-xs text-muted-foreground">
-          Leaderboard resets every Monday at 00:00 BRT.
+          A tabela de classificação reseta toda segunda-feira às 00:00 BRT.
         </p>
       </div>
     </main>

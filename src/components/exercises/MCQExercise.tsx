@@ -81,7 +81,7 @@ export default function MCQExercise({ content, submitted, onSelect, onSubmit }: 
       {submitted && content.explanation && (
         <div className="bg-secondary rounded-lg p-4 text-sm">
           <p className="font-medium mb-1">
-            {selected === content.correctIndex ? "✓ Correct!" : "✗ Incorrect"}
+            {selected === content.correctIndex ? "✓ Correto!" : "✗ Incorreto"}
           </p>
           <p className="text-muted-foreground">{content.explanation}</p>
         </div>
@@ -92,7 +92,7 @@ export default function MCQExercise({ content, submitted, onSelect, onSubmit }: 
           onClick={onSubmit}
           className="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition"
         >
-          Submit answer
+          Enviar resposta
         </button>
       )}
     </div>

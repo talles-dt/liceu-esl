@@ -16,7 +16,7 @@ function CallbackHandler() {
       const code = searchParams.get("code");
 
       if (!code) {
-        setError("No code found in URL.");
+        setError("Nenhum código encontrado na URL.");
         setTimeout(() => router.push("/auth/login"), 2000);
         return;
       }
@@ -34,7 +34,7 @@ function CallbackHandler() {
       // Verify session exists
       if (!data.session) {
         console.error("No session returned from exchangeCodeForSession");
-        setError("No session established.");
+        setError("Nenhuma sessão estabelecida.");
         setTimeout(() => router.push("/auth/login"), 2000);
         return;
       }
@@ -54,7 +54,7 @@ function CallbackHandler() {
       <main className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <p className="text-destructive text-sm">{error}</p>
-          <p className="text-muted-foreground text-sm">Redirecting to login...</p>
+          <p className="text-muted-foreground text-sm">Redirecionando para o login...</p>
         </div>
       </main>
     );
@@ -64,7 +64,7 @@ function CallbackHandler() {
     <main className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
-        <p className="text-muted-foreground">Completing sign in...</p>
+        <p className="text-muted-foreground">Finalizando login...</p>
       </div>
     </main>
   );
@@ -77,7 +77,7 @@ export default function AuthCallbackPage() {
         <main className="min-h-screen bg-background flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
-            <p className="text-muted-foreground">Loading...</p>
+            <p className="text-muted-foreground">Carregando...</p>
           </div>
         </main>
       }
