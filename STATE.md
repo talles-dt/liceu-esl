@@ -51,16 +51,16 @@
 - [x] GitHub repo created
 - [x] Vercel project created (staging + production) — deployed to lexio.oliceu.com
 - [x] Supabase project created — all 3 migrations applied
-- [x] Stripe account / product configured
+- [x] Stripe account / product configured — R$99/mo
 - [x] Anthropic API key provisioned
 - [x] OpenAI API key provisioned (TTS)
 - [x] Resend domain verified
 - [x] Custom domain registered (lexio.oliceu.com)
-- [ ] `NEXT_PUBLIC_CAL_COM_USERNAME` — set in Vercel env vars
-- [ ] `CRON_SECRET` — set in Vercel env vars
-- [ ] `STRIPE_PRICE_ID` — updated to R$99 price in Stripe dashboard
+- [x] `NEXT_PUBLIC_CAL_COM_USERNAME` — set
+- [x] `CRON_SECRET` — set
+- [x] `STRIPE_PRICE_ID` — updated to R$99
 - [ ] Vercel cron configured (`vercel.json` for streak check)
-- [ ] OG image uploaded (`public/og-image.png`)
+- [ ] OG image uploaded (`public/og-image.png`) — still being refined
 
 ---
 
