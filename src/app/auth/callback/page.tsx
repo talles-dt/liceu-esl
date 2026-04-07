@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Suspense } from "react";
@@ -8,60 +8,63 @@ import { Suspense } from "react";
 function CallbackHandler() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
     const handleCallback = async () => {
       const code = searchParams.get("code");
-      const type = searchParams.get("type");
 
-      try {
-        if (code) {
-          // PKCE flow — exchange code for session
-          const { error } = await supabase.auth.exchangeCodeForSession(code);
-          if (error) {
-            console.error("Code exchange error:", error);
-            router.push("/auth/login");
-            return;
-          }
-        } else if (type === "magiclink") {
-          // Fallback: just check session
-          const { error } = await supabase.auth.getSession();
-          if (error) {
-            console.error("Get session error:", error);
-            router.push("/auth/login");
-            return;
-          }
+      if (code) {
+        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+        if (exchangeError) {
+          console.error("PKCE exchange failed:", exchangeError);
+          setError("Failed to complete sign in.");
+          setTimeout(() => router.push("/auth/login"), 2000);
+          return;
         }
+      }
 
-        // Check if user has completed onboarding
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+      // Small delay to ensure cookie is set, then get user
+      await new Promise((r) => setTimeout(r, 100));
 
-        if (user) {
-          const { data: profile } = await supabase
-            .from("user_profiles")
-            .select("onboarding_complete, cefr_level")
-            .eq("id", user.id)
-            .single();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-          if (profile?.onboarding_complete && profile?.cefr_level) {
-            router.push("/dashboard");
-          } else {
-            router.push("/onboarding");
-          }
-        } else {
-          router.push("/auth/login");
-        }
-      } catch (err) {
-        console.error("Auth callback error:", err);
-        router.push("/auth/login");
+      if (!user) {
+        setError("No session found.");
+        setTimeout(() => router.push("/auth/login"), 2000);
+        return;
+      }
+
+      // Check onboarding status
+      const { data: profile } = await supabase
+        .from("user_profiles")
+        .select("onboarding_complete, cefr_level")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.onboarding_complete && profile?.cefr_level) {
+        router.push("/dashboard");
+      } else {
+        router.push("/onboarding");
       }
     };
 
     handleCallback();
   }, [supabase, router, searchParams]);
+
+  if (error) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <p className="text-destructive text-sm">{error}</p>
+          <p className="text-muted-foreground text-sm">Redirecting to login...</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-background flex items-center justify-center">
