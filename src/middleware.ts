@@ -32,22 +32,23 @@ export async function middleware(request: NextRequest) {
     }
   );
 
+  const url = request.nextUrl.clone();
+  const pathname = url.pathname;
+
+  // Skip all auth checks for callback route — the code exchange hasn't happened yet
+  // The route handler at /auth/callback handles session creation
+  if (pathname.startsWith("/auth/callback")) {
+    return supabaseResponse;
+  }
+
   // Refresh session if expired
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const url = request.nextUrl.clone();
-  const pathname = url.pathname;
-
   // Public routes that don't require auth
   const publicRoutes = ["/", "/auth", "/onboarding", "/api/webhooks"];
   const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
-
-  // Skip auth checks for callback route (Supabase OAuth lands here)
-  if (pathname.startsWith("/auth/callback")) {
-    return supabaseResponse;
-  }
 
   // If not authenticated and not on public route, redirect to auth
   if (!user && !isPublicRoute) {

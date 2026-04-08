@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { BASE_XP, XP_THRESHOLDS, type CefrLevel } from "@/types/database";
 
@@ -10,7 +9,14 @@ export default async function DashboardPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/auth/login");
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </main>
+    );
   }
 
   // Fetch user profile
@@ -21,12 +27,41 @@ export default async function DashboardPage() {
     .single();
 
   if (!profile) {
-    redirect("/auth/login");
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </main>
+    );
   }
 
-  // Redirect to onboarding if not completed
+  // If onboarding not complete, show CTA to go to onboarding
   if (!profile.onboarding_complete || !profile.cefr_level) {
-    redirect("/onboarding");
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="w-full max-w-md text-center space-y-6">
+          <div className="text-5xl">🎯</div>
+          <h1 className="text-2xl font-bold">Bem-vindo!</h1>
+          <p className="text-muted-foreground">
+            Faça o teste de nivelamento para descobrir seu nível CEFR e começar a praticar.
+          </p>
+          <Link
+            href="/onboarding"
+            className="inline-block px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition neon-glow"
+          >
+            Fazer Teste de Nivelamento
+          </Link>
+          <Link
+            href="/"
+            className="block text-muted-foreground hover:text-foreground transition text-sm"
+          >
+            ← Voltar ao início
+          </Link>
+        </div>
+      </main>
+    );
   }
 
   // Fetch stats
@@ -194,16 +229,19 @@ export default async function DashboardPage() {
         )}
 
         {!profile.onboarding_complete && !profile.cefr_level && (
-          <div className="bg-primary/10 border border-primary/20 rounded-xl p-6">
-            <h2 className="text-lg font-semibold mb-2">Complete seu cadastro</h2>
-            <p className="text-muted-foreground text-sm mb-4">
-              Faça o teste de nivelamento para obter seu nível CEFR e começar a aprender.
+          <div className="bg-primary/10 border border-primary/20 rounded-xl p-8 text-center space-y-4">
+            <div className="text-4xl">🎯</div>
+            <h2 className="text-xl font-bold">Descubra seu nível de inglês</h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Faça o teste de nivelamento gratuito — 60 perguntas que cobrem
+              gramática, vocabulário, leitura e uso pragmático. Leva cerca de
+              20 minutos e gera um relatório completo do seu nível CEFR.
             </p>
             <Link
               href="/onboarding"
-              className="inline-block px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition text-sm font-medium"
+              className="inline-block px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition neon-glow"
             >
-              Iniciar cadastro
+              Fazer Teste de Nivelamento
             </Link>
           </div>
         )}
