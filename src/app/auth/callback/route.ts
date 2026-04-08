@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${origin}/auth/login`);
   }
 
-  let response = NextResponse.redirect(`${origin}/dashboard`);
+  let response = NextResponse.redirect(`${origin}/onboarding`);
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
@@ -29,6 +29,15 @@ export default function LoginPage() {
 
   const supabase = createClient();
 
+  useEffect(() => {
+    // Check for auth error in URL params
+    const params = new URLSearchParams(window.location.search);
+    const authError = params.get("error");
+    if (authError === "auth_failed") {
+      setError("Falha na autenticação. Tente novamente.");
+    }
+  }, []);
+
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -43,7 +52,11 @@ export default function LoginPage() {
     });
 
     if (error) {
-      setError(error.message);
+      if (error.message.includes("rate limit") || error.message.includes("rate_limit")) {
+        setError("Muitas tentativas. Aguarde 60 segundos e tente novamente.");
+      } else {
+        setError(error.message);
+      }
     } else {
       setMessage("Verifique seu e-mail para o link de login!");
     }
