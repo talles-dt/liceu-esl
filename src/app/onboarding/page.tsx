@@ -99,8 +99,14 @@ export default function OnboardingPage() {
     try {
       const res = await fetch("/api/placement-test", { method: "POST" });
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to generate test");
+        let errorMsg = "Falha ao gerar teste.";
+        try {
+          const data = await res.json();
+          errorMsg = data.error || errorMsg;
+        } catch {
+          // Response body might be empty on 500
+        }
+        throw new Error(errorMsg);
       }
       const data = await res.json();
       setQuestions(data.questions);
