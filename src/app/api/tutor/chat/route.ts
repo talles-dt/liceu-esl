@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import Anthropic from "@anthropic-ai/sdk";
+import { createNvidiaClient, NVIDIA_MODEL } from "@/lib/nvidia";
 import type { CefrLevel } from "@/types/database";
 
 const SYSTEM_PROMPT = (level: string) => `You are Leo, an expert English language tutor from Lexio Underground.
@@ -14,8 +14,7 @@ Your role:
 - Keep responses concise (2-4 sentences max unless explaining a concept)
 - Never break character or discuss topics unrelated to language learning
 
-Current student level: ${level}
-`;
+Current student level: ${level}`;
 
 const MAX_MESSAGES_PER_DAY = 20;
 const FREE_USER_MAX_MESSAGES = 3;
@@ -54,20 +53,19 @@ export async function POST(req: NextRequest) {
 
   // Check daily message count
   const today = new Date().toISOString().split("T")[0];
+  const { data: sessions } = await supabase
+    .from("chat_sessions")
+    .select("id")
+    .eq("user_id", user.id);
+
+  const sessionIds = sessions?.map((s: { id: string }) => s.id) ?? [];
+
   const { count: todayCount } = await supabase
     .from("chat_messages")
     .select("*", { count: "exact", head: true })
     .eq("role", "user")
     .gte("created_at", `${today}T00:00:00`)
-    .in(
-      "session_id",
-      (
-        await supabase
-          .from("chat_sessions")
-          .select("id")
-          .eq("user_id", user.id)
-      ).data?.map((s: { id: string }) => s.id) ?? []
-    );
+    .in("session_id", sessionIds);
 
   if (!isPaid && (todayCount ?? 0) >= FREE_USER_MAX_MESSAGES) {
     return NextResponse.json(
@@ -122,18 +120,7 @@ export async function POST(req: NextRequest) {
     content: message,
   });
 
-  // Update session
-  await supabase
-    .from("chat_sessions")
-    .update({
-      last_message_at: new Date().toISOString(),
-      message_count: supabase.rpc("get_session_message_count", {
-        p_session_id: activeSessionId,
-      }) as any,
-    })
-    .eq("id", activeSessionId);
-
-  // Get conversation history (last 20 messages for context)
+  // Get conversation history (last 20 messages)
   const { data: messages } = await supabase
     .from("chat_messages")
     .select("role, content")
@@ -141,32 +128,24 @@ export async function POST(req: NextRequest) {
     .order("created_at", { ascending: true })
     .limit(20);
 
-  const claudeMessages = [
-    {
-      role: "system" as const,
-      content: SYSTEM_PROMPT(profile.cefr_level),
-    },
-    ...(messages ?? []).map((m: { role: string; content: string }) => ({
-      role: m.role === "user" ? ("user" as const) : ("assistant" as const),
-      content: m.content,
-    })),
-  ];
+  const aiMessages = (messages ?? []).map((m: { role: string; content: string }) => ({
+    role: m.role === "user" ? "user" as const : "assistant" as const,
+    content: m.content,
+  }));
 
-  const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
+  const client = createNvidiaClient();
+
+  const response = await client.chat.completions.create({
+    model: NVIDIA_MODEL,
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT(profile.cefr_level) },
+      ...aiMessages,
+    ],
+    temperature: 0.7,
+    max_tokens: 512,
   });
 
-  const response = await anthropic.messages.create({
-    model: "claude-haiku",
-    max_tokens: 1024,
-    messages: claudeMessages.filter(
-      (m) => m.role !== "system"
-    ) as Anthropic.MessageParam[],
-    system: SYSTEM_PROMPT(profile.cefr_level),
-  });
-
-  const reply =
-    response.content.find((c) => c.type === "text")?.text ??
+  const reply = response.choices[0]?.message?.content ??
     "I'm not sure how to respond to that. Let's try something else!";
 
   // Save assistant message
@@ -176,7 +155,7 @@ export async function POST(req: NextRequest) {
     content: reply,
   });
 
-  // Update session message count properly
+  // Update session message count
   const { count: msgCount } = await supabase
     .from("chat_messages")
     .select("*", { count: "exact", head: true })
