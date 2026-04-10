@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createServerClient } from "@supabase/ssr";
 
 /**
  * Server-side auth callback handler.
  * Supabase redirects here with ?code= after magic link / OAuth.
- * This exchanges the code for a session server-side, sets cookies properly,
- * then redirects to the app.
+ * The @supabase/ssr client reads the code_verifier from cookies
+ * (set by the client-side signInWithOtp call) and exchanges it properly.
  */
 export async function GET(req: NextRequest) {
   const requestUrl = new URL(req.url);
@@ -17,13 +17,21 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${origin}/auth/login`);
   }
 
-  const supabase = createClient(
+  let response = NextResponse.redirect(`${origin}/onboarding`);
+
+  const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
+      cookies: {
+        getAll() {
+          return req.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            response.cookies.set(name, value, options);
+          });
+        },
       },
     }
   );
@@ -36,7 +44,7 @@ export async function GET(req: NextRequest) {
       status: error.status,
       code: error.code,
     });
-    return NextResponse.redirect(`${origin}/auth/login?error=auth_failed&detail=${encodeURIComponent(error.message)}`);
+    return NextResponse.redirect(`${origin}/auth/login?error=auth_failed`);
   }
 
   if (!data.session) {
@@ -44,37 +52,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${origin}/auth/login?error=auth_failed`);
   }
 
-  console.log("[auth/callback] Session established for", data.user?.email, "id:", data.user?.id);
-
-  // Build response and set cookies from the session
-  const response = NextResponse.redirect(`${origin}/onboarding`);
-
-  const { access_token, refresh_token } = data.session;
-
-  // Standard Supabase cookie names that @supabase/ssr reads
-  response.cookies.set(
-    "sb-access-token",
-    access_token,
-    {
-      path: "/",
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60,
-    }
-  );
-
-  response.cookies.set(
-    "sb-refresh-token",
-    refresh_token,
-    {
-      path: "/",
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 30,
-    }
-  );
+  console.log("[auth/callback] Session established for", data.user?.email);
 
   return response;
 }
