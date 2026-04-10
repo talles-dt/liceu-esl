@@ -52,6 +52,20 @@ export async function GET(req: NextRequest) {
       }
 
       console.log("[auth/callback] Magic link session established for", data.user?.email);
+
+      // Set the session cookie that @supabase/ssr expects
+      response.cookies.set(
+        "supabase-auth-token",
+        JSON.stringify(data.session),
+        {
+          path: "/",
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 60 * 60, // 1 hour
+        }
+      );
+
       return response;
     }
 
