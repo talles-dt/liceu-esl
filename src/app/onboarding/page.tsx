@@ -10,6 +10,7 @@ interface Question {
   correctIndex: number;
   cefr_level: string;
   skill: string;
+  difficulty_score?: number; // Optional for backward compatibility
 }
 
 type Phase = "intro" | "testing" | "report";
@@ -91,6 +92,10 @@ export default function OnboardingPage() {
   const [overallLevel, setOverallLevel] = useState("");
   const [skillBreakdown, setSkillBreakdown] = useState<Record<string, { correct: number; total: number }>>({});
   const [levelBreakdown, setLevelBreakdown] = useState<Record<string, { correct: number; total: number }>>({});
+  
+  // Roadmap data
+  const [roadmap, setRoadmap] = useState<any>(null);
+  const [generatingRoadmap, setGeneratingRoadmap] = useState(false);
 
   const startTest = useCallback(async () => {
     setLoading(true);
@@ -131,39 +136,99 @@ export default function OnboardingPage() {
 
   const generateReport = (finalAnswers: number[]) => {
     // Per-skill breakdown
-    const skills: Record<string, { correct: number; total: number }> = {};
+    const skills: Record<string, { correct: number; total: number; weighted_score: number }> = {};
     // Per-level breakdown
-    const levels: Record<string, { correct: number; total: number }> = {};
+    const levels: Record<string, { correct: number; total: number; weighted_score: number }> = {};
 
     questions.forEach((q, i) => {
-      if (!skills[q.skill]) skills[q.skill] = { correct: 0, total: 0 };
-      if (!levels[q.cefr_level]) levels[q.cefr_level] = { correct: 0, total: 0 };
+      if (!skills[q.skill]) skills[q.skill] = { correct: 0, total: 0, weighted_score: 0 };
+      if (!levels[q.cefr_level]) levels[q.cefr_level] = { correct: 0, total: 0, weighted_score: 0 };
+      
       skills[q.skill].total++;
       levels[q.cefr_level].total++;
-      if (finalAnswers[i] === q.correctIndex) {
+      
+      const isCorrect = finalAnswers[i] === q.correctIndex;
+      if (isCorrect) {
         skills[q.skill].correct++;
         levels[q.cefr_level].correct++;
+        // Add weighted score based on difficulty
+        skills[q.skill].weighted_score += q.difficulty_score || 1;
+        levels[q.cefr_level].weighted_score += q.difficulty_score || 1;
       }
     });
 
-    // Determine overall level: highest CEFR level where accuracy ≥ 60%
+    // Enhanced level determination algorithm
     const levelOrder = ["A1", "A2", "B1", "B2", "C1", "C2"];
+    const levelWeights: Record<string, number> = { A1: 1.0, A2: 2.0, B1: 3.0, B2: 4.0, C1: 5.0, C2: 6.0 };
+    
+    // Calculate weighted accuracy for each level
     let determinedLevel = "A1";
+    let highestConfidenceScore = 0;
+
     for (const lvl of levelOrder) {
       const data = levels[lvl];
-      if (!data || data.total === 0) break;
-      const accuracy = data.correct / data.total;
-      if (accuracy >= 0.6) {
+      if (!data || data.total === 0) continue;
+      
+      const baseAccuracy = data.correct / data.total;
+      const avgDifficulty = data.weighted_score / (data.correct || 1);
+      const levelWeight = levelWeights[lvl];
+      
+      // Confidence score combines accuracy, difficulty, and level progression
+      const confidenceScore = baseAccuracy * (avgDifficulty / 5.0) * levelWeight;
+      
+      // Must have at least 50% accuracy to pass this level
+      if (baseAccuracy >= 0.5 && confidenceScore > highestConfidenceScore) {
+        highestConfidenceScore = confidenceScore;
         determinedLevel = lvl;
-      } else {
-        break;
+      } else if (baseAccuracy < 0.5) {
+        break; // Stop at first level where user struggles
       }
+    }
+
+    // Edge case: if no level passed 50%, assign A1
+    const a1Data = levels["A1"];
+    if (a1Data && a1Data.correct / a1Data.total < 0.5) {
+      determinedLevel = "A1";
     }
 
     setSkillBreakdown(skills);
     setLevelBreakdown(levels);
     setOverallLevel(determinedLevel);
     setPhase("report");
+    
+    // Generate roadmap after setting phase
+    generateRoadmap(finalAnswers, determinedLevel);
+  };
+
+  const generateRoadmap = async (finalAnswers: number[], currentLevel: string) => {
+    setGeneratingRoadmap(true);
+    try {
+      const res = await fetch("/api/generate-roadmap", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          answers: finalAnswers,
+          questions: questions.map(q => ({
+            question: q.question,
+            options: q.options,
+            correctIndex: q.correctIndex,
+            cefr_level: q.cefr_level,
+            skill: q.skill,
+            difficulty_score: q.difficulty_score || 1,
+          })),
+          targetLevel: "C2",
+        }),
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setRoadmap(data.roadmap);
+      }
+    } catch (err) {
+      console.error("Failed to generate roadmap:", err);
+    } finally {
+      setGeneratingRoadmap(false);
+    }
   };
 
   // ─── INTRO ───
@@ -179,8 +244,8 @@ export default function OnboardingPage() {
               Descubra Seu Nível de Inglês
             </h1>
             <p className="text-lg text-muted-foreground max-w-lg mx-auto">
-              60 perguntas abrangentes sobre gramática, vocabulário, leitura
-              e uso pragmático. Leva cerca de 20 minutos.
+              100 perguntas abrangentes sobre gramática e vocabulário em todos os níveis CEFR (A1-C2). 
+              Leva cerca de 25-30 minutos. Avaliação ponderada com análise de compreensão contextual.
             </p>
           </div>
 
@@ -198,8 +263,8 @@ export default function OnboardingPage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto">
             {[
-              { icon: "📝", label: "60 Perguntas" },
-              { icon: "⏱️", label: "~20 Minutos" },
+              { icon: "📝", label: "100 Perguntas" },
+              { icon: "⏱️", label: "~30 Minutos" },
               { icon: "📊", label: "Resultado A1–C2" },
               { icon: "📋", label: "Relatório Completo" },
             ].map((item) => (
@@ -218,8 +283,8 @@ export default function OnboardingPage() {
             <div className="grid grid-cols-2 gap-2">
               <span>• Gramática (A1–C2)</span>
               <span>• Vocabulário (A1–C2)</span>
-              <span>• Leitura (B1–C1)</span>
-              <span>• Uso Pragmático (B2–C2)</span>
+              <span>• Compreensão Contextual</span>
+              <span>• Análise Ponderada</span>
             </div>
           </div>
 
@@ -364,7 +429,7 @@ export default function OnboardingPage() {
                 const data = levelBreakdown[lvl];
                 const accuracy = data ? Math.round((data.correct / data.total) * 100) : 0;
                 const isCurrent = lvl === overallLevel;
-                const passed = accuracy >= 60;
+                const passed = accuracy >= 50;
 
                 return (
                   <div key={lvl} className="flex items-center gap-3">
@@ -406,6 +471,10 @@ export default function OnboardingPage() {
             <div className="space-y-3">
               {Object.entries(skillBreakdown).map(([skill, data]) => {
                 const pct = Math.round((data.correct / data.total) * 100);
+                const avgDifficulty = data.weighted_score && data.correct > 0 
+                  ? (data.weighted_score / data.correct).toFixed(1) 
+                  : null;
+                
                 return (
                   <div key={skill} className="flex items-center gap-3">
                     <span className="w-32 text-sm text-muted-foreground">
@@ -417,14 +486,120 @@ export default function OnboardingPage() {
                         style={{ width: `${pct}%` }}
                       />
                     </div>
-                    <span className="w-16 text-right text-xs text-muted-foreground">
+                    <span className="w-24 text-right text-xs text-muted-foreground">
                       {data.correct}/{data.total} ({pct}%)
+                      {avgDifficulty && (
+                        <span className="block text-[10px] opacity-70">
+                          Dificuldade: {avgDifficulty}/5
+                        </span>
+                      )}
                     </span>
                   </div>
                 );
               })}
             </div>
           </div>
+
+          {/* Learning Roadmap */}
+          {roadmap && (
+            <div className="bg-card border border-border rounded-xl p-6 space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="text-3xl">🗺️</div>
+                <h2 className="text-xl font-semibold">Seu Roadmap de Aprendizado</h2>
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 space-y-2">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">Tempo Estimado</p>
+                  <p className="text-2xl font-bold text-primary">{roadmap.estimatedWeeks}</p>
+                  <p className="text-xs text-muted-foreground">semanas</p>
+                  <p className="text-xs text-muted-foreground">({roadmap.estimatedHours} horas totais)</p>
+                </div>
+                <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 space-y-2">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">Estudo Semanal</p>
+                  <p className="text-2xl font-bold text-accent">{roadmap.recommendedHoursPerWeek}h</p>
+                  <p className="text-xs text-muted-foreground">por semana</p>
+                  <p className="text-xs text-muted-foreground">recomendado</p>
+                </div>
+                <div className="bg-success/5 border border-success/20 rounded-lg p-4 space-y-2">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">Compreensão Contextual</p>
+                  <p className="text-2xl font-bold text-success">{roadmap.contextualComprehensionScore}%</p>
+                  <p className="text-xs text-muted-foreground">de precisão</p>
+                  <p className="text-xs text-muted-foreground">em questões contextuais</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold text-foreground">Pontos Fortes</h3>
+                {roadmap.strengths.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {roadmap.strengths.map((strength: string, i: number) => (
+                      <span key={i} className="px-3 py-1 bg-success/10 text-success text-xs font-medium rounded-full">
+                        ✓ {strength}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground italic">Em desenvolvimento</p>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold text-foreground">Áreas para Melhorar</h3>
+                {roadmap.weaknesses.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {roadmap.weaknesses.map((weakness: string, i: number) => (
+                      <span key={i} className="px-3 py-1 bg-warning/10 text-warning text-xs font-medium rounded-full">
+                        ⚠ {weakness}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground italic">Sem áreas críticas identificadas</p>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold text-foreground">Tópicos Prioritários</h3>
+                <ul className="space-y-2">
+                  {roadmap.priorityTopics.slice(0, 5).map((topic: string, i: number) => (
+                    <li key={i} className="flex items-start gap-2 text-sm">
+                      <span className="text-primary font-bold mt-0.5">{i + 1}.</span>
+                      <span className="text-muted-foreground">{topic}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold text-foreground">Fases do Plano de Estudos</h3>
+                <div className="space-y-3">
+                  {roadmap.studyPlan.phases.slice(0, 3).map((phase: any, i: number) => (
+                    <div key={i} className={`border rounded-lg p-4 space-y-2 ${phase.status === 'in_progress' ? 'border-primary bg-primary/5' : 'border-border'}`}>
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium text-sm">{phase.phase_name}</h4>
+                        {phase.status === 'in_progress' && (
+                          <span className="px-2 py-0.5 bg-primary text-primary-foreground text-xs rounded-full">Em Progresso</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground">{phase.description}</p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <span>⏱️ {phase.estimated_hours}h estimadas</span>
+                        <span>📚 {phase.topics.length} tópicos</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {generatingRoadmap && (
+            <div className="bg-card border border-border rounded-xl p-6 text-center space-y-3">
+              <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
+              <p className="text-muted-foreground">Gerando seu roadmap personalizado...</p>
+            </div>
+          )}
 
           {/* CTA */}
           <div className="space-y-3">
