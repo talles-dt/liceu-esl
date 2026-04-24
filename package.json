@@ -10,9 +10,12 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.82.0",
+    "@radix-ui/react-icons": "^1.3.2",
+    "@react-three/fiber": "^9.6.0",
     "@sentry/nextjs": "^10.47.0",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.46.1",
+    "@tremor/react": "^3.18.7",
     "anthropic": "^0.0.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.460.0",
@@ -20,6 +23,7 @@
     "openai": "^6.33.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
     "resend": "^4.0.1",
     "stripe": "^17.4.0",
     "tailwind-merge": "^2.5.5"

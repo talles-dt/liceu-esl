@@ -1,9 +1,17 @@
 // src/app/lesson/page.tsx
-'use client'
+"use client"
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+
+interface Lesson {
+ grammar: string
+ logic: string
+ communication: string
+ mnemonic: string
+}
 
 export default function LessonPage() {
  const [lesson, setLesson] = useState<Lesson | null>(null)
