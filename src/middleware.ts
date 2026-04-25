@@ -47,8 +47,16 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Public routes that don't require auth
-  const publicRoutes = ["/", "/auth", "/onboarding", "/api/webhooks"];
-  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
+  const publicRoutes = [
+    "/",
+    "/auth",
+    "/onboarding",
+    "/api/webhooks",
+    "/api/placement-test",
+  ];
+  const isPublicRoute =
+    pathname.startsWith("/api/cron") ||
+    publicRoutes.some((route) => pathname.startsWith(route));
 
   // If not authenticated and not on public route, redirect to auth
   if (!user && !isPublicRoute) {
@@ -63,7 +71,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Subscription gate: paid-only routes
-  const paidRoutes = ["/exercise", "/tutor", "/leaderboard", "/book"];
+  const paidRoutes = ["/exercise", "/leaderboard", "/book"];
   const isPaidRoute = paidRoutes.some((route) => pathname.startsWith(route));
 
   if (user && isPaidRoute) {

@@ -1,8 +1,13 @@
 {
+  "regions": ["sao1"],
   "crons": [
     {
       "path": "/api/cron/streak-check",
       "schedule": "0 23 * * *"
+    },
+    {
+      "path": "/api/cron/reset-daily-lessons",
+      "schedule": "0 3 * * *"
     }
   ]
 }

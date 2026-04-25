@@ -1,13 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-
-function getStartOfWeek(date: Date): Date {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
+import { brtMondayStartUtcIso, brtNextMondayStartUtcIso } from "@/lib/brt-dates";
 
 export default async function LeaderboardPage() {
   const supabase = await createClient();
@@ -17,50 +10,47 @@ export default async function LeaderboardPage() {
 
   if (!user) redirect("/auth/login");
 
-  const weekStart = getStartOfWeek(new Date());
-  const weekStartStr = weekStart.toISOString().split("T")[0];
+  const weekStartIso = brtMondayStartUtcIso();
+  const weekEndIso = brtNextMondayStartUtcIso();
 
-  // Top 10 this week
-  const { data: top10 } = await supabase
+  const { data: weekRows } = await supabase
     .from("xp_log")
     .select("user_id, amount")
-    .gte("created_at", `${weekStartStr}T00:00:00`)
-    .order("created_at", { ascending: false });
+    .gte("created_at", weekStartIso)
+    .lt("created_at", weekEndIso);
 
-  // Aggregate XP per user
   const xpMap: Record<string, number> = {};
-  top10?.forEach((row) => {
+  weekRows?.forEach((row) => {
     xpMap[row.user_id] = (xpMap[row.user_id] ?? 0) + row.amount;
   });
 
-  const sorted = Object.entries(xpMap)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 10);
+  const allSorted = Object.entries(xpMap).sort(([, a], [, b]) => b - a);
+  const sorted = allSorted.slice(0, 10);
 
-  // Fetch profiles for top 10
   const userIds = sorted.map(([id]) => id);
-  const { data: profiles } = await supabase
-    .from("user_profiles")
-    .select("id, name, cefr_level")
-    .in("id", userIds);
+  let profiles: { id: string; name: string | null; cefr_level: string | null }[] | null = null;
+  if (userIds.length > 0) {
+    const res = await supabase
+      .from("user_profiles")
+      .select("id, name, cefr_level")
+      .in("id", userIds);
+    profiles = res.data;
+  }
 
   const profileMap: Record<string, { name: string | null; cefr_level: string | null }> = {};
   profiles?.forEach((p) => {
     profileMap[p.id] = { name: p.name, cefr_level: p.cefr_level };
   });
 
-  // Current user's rank and XP
-  let userRank: number | null = null;
-  let userXP = 0;
-  if (user) {
-    userXP = xpMap[user.id] ?? 0;
-    userRank = sorted.findIndex(([id]) => id === user.id) + 1;
-    if (userRank === 0 && userXP > 0) {
-      // User has XP but not in top 10
-      const allEntries = Object.entries(xpMap).sort(([, a], [, b]) => b - a);
-      userRank = allEntries.findIndex(([id]) => id === user.id) + 1;
-    }
-  }
+  const userXP = xpMap[user.id] ?? 0;
+  const userRank =
+    userXP > 0 ? allSorted.findIndex(([id]) => id === user.id) + 1 : null;
+
+  const weekLabel = new Date(weekStartIso).toLocaleDateString("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    month: "short",
+    day: "numeric",
+  });
 
   return (
     <main className="min-h-screen bg-background p-4 md:p-8">
@@ -70,11 +60,11 @@ export default async function LeaderboardPage() {
             🏆 Tabela de Classificação Semanal
           </h1>
           <p className="text-muted-foreground text-sm">
-            Semana de {weekStart.toLocaleDateString("pt-BR", { month: "short", day: "numeric" })}
+            Semana a partir de {weekLabel} (BRT)
           </p>
         </div>
 
-        {userRank && userRank > 10 && (
+        {userRank !== null && userRank > 10 && (
           <div className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
             <span className="text-sm text-muted-foreground">Sua classificação</span>
             <div className="flex items-center gap-3">

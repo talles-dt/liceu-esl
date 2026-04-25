@@ -1,28 +1,9 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
 import CalBooking from "@/components/CalBooking";
-import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function BookClassPage() {
-  const [username, setUsername] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Read Cal.com username from env
-    const calUser = process.env.NEXT_PUBLIC_CAL_COM_USERNAME ?? null;
-    setUsername(calUser);
-    setLoading(false);
-  }, []);
-
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
-      </main>
-    );
-  }
+  const username = process.env.NEXT_PUBLIC_CAL_COM_USERNAME ?? null;
 
   if (!username) {
     return (
@@ -48,11 +29,7 @@ export default function BookClassPage() {
         </div>
 
         <div className="bg-card border border-border rounded-xl overflow-hidden">
-          <CalBooking
-            username={username}
-            eventSlug="30min"
-            className="w-full"
-          />
+          <CalBooking username={username} eventSlug="30min" className="w-full" />
         </div>
       </div>
     </main>

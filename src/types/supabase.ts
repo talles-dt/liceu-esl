@@ -366,6 +366,54 @@ export type Database = {
         }
         Relationships: []
       }
+      lessons: {
+        Row: {
+          id: string
+          user_id: string
+          pillar: string
+          cefr_level: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
+          content: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          pillar: string
+          cefr_level: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
+          content: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          pillar?: string
+          cefr_level?: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
+          content?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
+      nim_usage: {
+        Row: {
+          id: string
+          created_at: string
+          source: string
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          source: string
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          source?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       generation_logs: {
         Row: {
           id: string

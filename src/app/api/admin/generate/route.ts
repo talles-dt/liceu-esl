@@ -8,6 +8,7 @@ import type {
   ExerciseContent,
 } from "@/types/exercise-content";
 import type { CefrLevel, ExerciseSkill, ExerciseType } from "@/types/database";
+import { assertNimCreditsAvailable, recordNimUsage } from "@/lib/nim-credits";
 
 const CONTENT_SCHEMAS: Record<ExerciseType, string> = {
   mcq: `{"type":"mcq","content":{"question":"string","options":["string","string","string","string"],"correctIndex":0,"explanation":"string"}}`,
@@ -71,6 +72,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Count must be between 1 and 20" }, { status: 400 });
   }
 
+  if (!(await assertNimCreditsAvailable())) {
+    return NextResponse.json(
+      { error: "AI capacity temporarily limited. Try again later." },
+      { status: 503 }
+    );
+  }
+
   const client = createNvidiaClient();
   const prompt = getGenerationPrompt(body);
 
@@ -85,14 +93,16 @@ export async function POST(req: NextRequest) {
   });
 
   const content = response.choices[0]?.message?.content ?? "";
+  await recordNimUsage("admin_generate", user.id);
 
   let exercises: GeneratedExercise[];
   try {
     const cleaned = content.replace(/```(?:json)?\n?/g, "").trim();
     exercises = JSON.parse(cleaned);
   } catch {
+    console.error("admin generate: failed to parse NIM JSON");
     return NextResponse.json(
-      { error: "Failed to parse AI response", raw: content },
+      { error: "Failed to parse AI response." },
       { status: 500 }
     );
   }

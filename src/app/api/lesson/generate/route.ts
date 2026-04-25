@@ -1,118 +1,136 @@
-"use server"
+import { NextResponse, type NextRequest } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { createNvidiaClient, NVIDIA_MODEL } from "@/lib/nvidia";
+import {
+  coerceLessonOutput,
+  extractJsonObject,
+  FALLBACK_LESSON,
+  type PillarLesson,
+} from "@/lib/lesson-output";
+import type { CefrLevel } from "@/types/database";
+import { clampToMvpCefr } from "@/lib/cefr-mvp";
+import { pillarForBrtDate, type PillarKey } from "@/lib/pillar-schedule";
+import { assertNimCreditsAvailable, recordNimUsage } from "@/lib/nim-credits";
 
-import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
-import { type NextRequest } from 'next/server'
+const PILLARS = new Set<string>(["grammar", "logic", "communication"]);
 
-// Define Lesson type
-interface Lesson {
- grammar: string
- logic: string
- communication: string
- mnemonic: string
-}
+function buildPrompt(pillar: string, level: string, anchor: string): string {
+  return `
+You are Lexio, an AI tutor specializing in ${pillar} for Brazilians learning English.
+Target CEFR band for this lesson: **${level}** (MVP scope is A2–C1 only; calibrate vocabulary and examples strictly to ${level}).
 
-// Helper: Build prompt for NVIDIA NIM
-function buildPrompt(pillar: string, level: string, interest: string): string {
- return `
-You are Lexio, an AI tutor specializing in ${pillar} for Brazilians learning English (CEFR ${level}).
-Use the memory palace anchor: **${interest}**.
+Use the memory palace anchor: **${anchor}**.
 
-Output **JSON-only** with these fields:
+Output **JSON only** (no markdown fences) with exactly these string fields:
 {
- "grammar": "PT-BR interference + rule",
- "logic": "Reasoning behind usage",
- "communication": "Real-world scenario + examples",
- "mnemonic": "CONCEPT→LOCATION→HOOK→TRIGGER"
+  "grammar": "Explicit pattern + PT-BR interference warning",
+  "logic": "Reasoning behind usage choice",
+  "communication": "Real-world scenario + cultural note",
+  "mnemonic": "CONCEPT→LOCATION→VISUAL HOOK→PT ANCHOR"
 }
 
 Example:
 {
- "grammar": "*The* vs. *zero article*. PT error: 'Eu gosto de *o* café'. Correct: 'I like coffee'.",
- "logic": "English uses zero article for uncountables/general plurals.",
- "communication": "Ask for 'advice' (uncountable), not 'an advice'.",
- "mnemonic": "COFFEE SHOP→COUNTER→COIN JAR→CAIXINHA DE MOEDAS"
+  "grammar": "*The* vs. *zero article*. PT error: 'Eu gosto de *o* café'. Correct: 'I like coffee'.",
+  "logic": "English uses zero article for uncountables/general plurals.",
+  "communication": "Ask for 'advice' (uncountable), not 'an advice'.",
+  "mnemonic": "COFFEE SHOP→COUNTER→COIN JAR→CAIXINHA DE MOEDAS"
 }
-`.trim()
-}
-
-// Helper: Call NVIDIA API
-async function generateLesson(prompt: string): Promise<Lesson> {
- const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
- method: 'POST',
- headers: {
- 'Authorization': `Bearer ${process.env.NVIDIA_API_KEY}`,
- 'Content-Type': 'application/json'
- },
- body: JSON.stringify({
- model: 'qwen/qwen3-14b-instruct',
- messages: [{ role: 'user', content: prompt }],
- temperature: 0.3,
- max_tokens: 1024
- })
- })
-
- if (!response.ok) {
- throw new Error(`NVIDIA API error: ${await response.text()}`)
- }
-
- const data = await response.json()
- return JSON.parse(data.choices[0].message.content)
+`.trim();
 }
 
-// Main API handler
+async function callNim(prompt: string): Promise<string> {
+  const client = createNvidiaClient();
+  const response = await client.chat.completions.create({
+    model: NVIDIA_MODEL,
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.3,
+    max_tokens: 1024,
+  });
+  const raw = response.choices[0]?.message?.content;
+  if (!raw || !raw.trim()) {
+    throw new Error("empty_model_output");
+  }
+  return raw.trim();
+}
+
 export async function POST(req: NextRequest) {
- try {
- const { user_id, level, pillar } = await req.json()
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
- // Validate input
- if (!user_id || !level || !pillar) {
- return NextResponse.json(
- { error: "Missing user_id, level, or pillar" },
- { status: 400 }
- }
- }
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
- // Fetch user interests from Supabase
- const { data: user, error } = await supabase
- .from('user_profiles')
- .select('interests')
- .eq('id', user_id)
- .single()
+    const body = await req.json().catch(() => ({}));
+    const pillarParam =
+      typeof body.pillar === "string" ? body.pillar.toLowerCase().trim() : "";
 
- if (error || !user) {
- return NextResponse.json(
- { error: "User not found or Supabase error" },
- { status: 500 }
- )
- }
+    let pillarRaw: PillarKey;
+    if (!pillarParam) {
+      pillarRaw = pillarForBrtDate(new Date());
+    } else if (PILLARS.has(pillarParam)) {
+      pillarRaw = pillarParam as PillarKey;
+    } else {
+      return NextResponse.json(
+        { error: "Invalid pillar (grammar | logic | communication), or omit for today’s BRT pillar." },
+        { status: 400 }
+      );
+    }
 
- // Generate lesson
- const interest = user.interests[0] || "coffee"
- const prompt = buildPrompt(pillar, level, interest)
- const lesson = await generateLesson(prompt)
+    const { data: profile, error: profileError } = await supabase
+      .from("user_profiles")
+      .select("cefr_level, professional_context")
+      .eq("id", user.id)
+      .single();
 
- // Save lesson to Supabase
- const { error: saveError } = await supabase
- .from('lessons')
- .insert([{
- user_id,
- pillar,
- difficulty: level,
- content: lesson
- }])
+    if (profileError || !profile?.cefr_level) {
+      return NextResponse.json(
+        { error: "Complete placement before generating lessons." },
+        { status: 403 }
+      );
+    }
 
- if (saveError) {
- console.error("Supabase save error:", saveError)
- }
+    const level = clampToMvpCefr(profile.cefr_level as CefrLevel);
+    const anchor =
+      profile.professional_context?.trim() ||
+      "your daily routine and workspace";
 
- return NextResponse.json(lesson)
+    const prompt = buildPrompt(pillarRaw, level, anchor);
 
- } catch (err) {
- console.error("Lesson API error:", err)
- return NextResponse.json(
- { error: err instanceof Error ? err.message : "Internal server error" },
- { status: 500 }
- )
- }
+    let lesson: PillarLesson = FALLBACK_LESSON;
+
+    const canCall = await assertNimCreditsAvailable();
+    if (canCall) {
+      try {
+        const raw = await callNim(prompt);
+        await recordNimUsage("lesson", user.id);
+        const parsed = extractJsonObject(raw);
+        lesson = coerceLessonOutput(parsed);
+      } catch {
+        lesson = FALLBACK_LESSON;
+      }
+    }
+
+    const { error: saveError } = await supabase.from("lessons").insert({
+      user_id: user.id,
+      pillar: pillarRaw,
+      cefr_level: level,
+      content: lesson,
+    });
+
+    if (saveError) {
+      console.error("lessons insert:", saveError);
+    }
+
+    return NextResponse.json(lesson);
+  } catch {
+    return NextResponse.json(
+      { error: "Could not generate a lesson right now. Please try again." },
+      { status: 503 }
+    );
+  }
 }

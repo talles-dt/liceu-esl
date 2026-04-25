@@ -16,53 +16,49 @@ export default function VocabDragExercise({ content, submitted, onSelect, onSubm
   const [slots, setSlots] = useState<string[]>(Array(blankCount).fill(""));
   const [availableWords, setAvailableWords] = useState<string[]>([...content.words]);
   const dragOverSlot = useRef<number | null>(null);
+  const draggedWord = useRef<string | null>(null);
 
   const parts = content.sentence.split("___");
 
   const handleDragStart = (word: string) => {
-    // Store the word being dragged
-    (window as any)._dragWord = word;
+    draggedWord.current = word;
   };
 
   const handleDropOnSlot = (slotIndex: number) => {
     if (submitted) return;
-    const word = (window as any)._dragWord;
+    const word = draggedWord.current;
     if (!word) return;
+    draggedWord.current = null;
 
-    // If slot already has a word, return it to available
-    const newSlots = [...slots];
-    if (newSlots[slotIndex]) {
-      setAvailableWords((prev) => [...prev, newSlots[slotIndex]]);
-    }
-    newSlots[slotIndex] = word;
-    setSlots(newSlots);
+    const prevWord = slots[slotIndex];
+    const nextSlots = slots.map((s, i) => (i === slotIndex ? word : s));
+    setSlots(nextSlots);
 
-    // Remove word from available
-    setAvailableWords((prev) => prev.filter((w, i) => i !== prev.indexOf(word)));
-
-    onSelect(newSlots);
+    let bank = [...availableWords];
+    if (prevWord) bank.push(prevWord);
+    const takeIdx = bank.indexOf(word);
+    if (takeIdx !== -1) bank = bank.filter((_, i) => i !== takeIdx);
+    setAvailableWords(bank);
+    onSelect(nextSlots);
   };
 
   const handleDropOnWordBank = () => {
     if (submitted) return;
-    // Word returned to bank — do nothing special
   };
 
   const handleRemoveFromSlot = (slotIndex: number) => {
     if (submitted) return;
-    const newSlots = [...slots];
-    const word = newSlots[slotIndex];
+    const word = slots[slotIndex];
+    const nextSlots = slots.map((s, i) => (i === slotIndex ? "" : s));
+    setSlots(nextSlots);
     if (word) {
       setAvailableWords((prev) => [...prev, word]);
     }
-    newSlots[slotIndex] = "";
-    setSlots(newSlots);
-    onSelect(newSlots);
+    onSelect(nextSlots);
   };
 
   return (
     <div className="space-y-6">
-      {/* Sentence with drop zones */}
       <div className="text-lg leading-loose">
         {parts.map((part, i) => (
           <span key={i}>
@@ -84,8 +80,8 @@ export default function VocabDragExercise({ content, submitted, onSelect, onSubm
                     ? submitted && slots[i] === content.correctOrder[i]
                       ? "border-success bg-success/10 text-success"
                       : submitted
-                      ? "border-destructive bg-destructive/10"
-                      : "border-primary bg-primary/10 text-primary"
+                        ? "border-destructive bg-destructive/10"
+                        : "border-primary bg-primary/10 text-primary"
                     : "border-dashed border-border hover:border-primary/50"
                 )}
               >
@@ -96,7 +92,6 @@ export default function VocabDragExercise({ content, submitted, onSelect, onSubm
         ))}
       </div>
 
-      {/* Word bank */}
       <div className="bg-secondary rounded-lg p-4">
         <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide">
           Arraste as palavras para os espacos (clique em um espaco preenchido para remover)
@@ -108,7 +103,7 @@ export default function VocabDragExercise({ content, submitted, onSelect, onSubm
         >
           {availableWords.map((word, i) => (
             <span
-              key={i}
+              key={`${word}-${i}`}
               draggable
               onDragStart={() => handleDragStart(word)}
               className="px-3 py-2 bg-card border border-border rounded-lg cursor-grab active:cursor-grabbing hover:border-primary/50 transition select-none text-sm"
@@ -134,6 +129,7 @@ export default function VocabDragExercise({ content, submitted, onSelect, onSubm
 
       {!submitted && slots.every((s) => s !== "") && (
         <button
+          type="button"
           onClick={onSubmit}
           className="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition"
         >

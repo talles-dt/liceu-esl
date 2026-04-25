@@ -1,89 +1,147 @@
-// src/app/lesson/page.tsx
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import ReactMarkdown from "react-markdown";
 
-interface Lesson {
- grammar: string
- logic: string
- communication: string
- mnemonic: string
+interface PillarLesson {
+  grammar: string;
+  logic: string;
+  communication: string;
+  mnemonic: string;
 }
 
 export default function LessonPage() {
- const [lesson, setLesson] = useState<Lesson | null>(null)
- const [loading, setLoading] = useState(true)
- const router = useRouter()
+  const [lesson, setLesson] = useState<PillarLesson | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
- useEffect(() => {
- // Fetch lesson based on CEFR level (from user profile or URL param)
- async function generateLesson() {
- try {
- const response = await fetch('/api/lesson/generate', {
- method: 'POST',
- headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ user_id: 'dummy-user', level: 'B1' })
- })
- const data = await response.json()
- setLesson(data)
- } catch (err) {
- console.error("Failed to generate lesson:", err)
- } finally {
- setLoading(false)
- }
- }
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const params = new URLSearchParams(
+      typeof window !== "undefined" ? window.location.search : ""
+    );
+    const raw = params.get("pillar");
+    const p = raw?.toLowerCase().trim();
+    const payload =
+      p === "grammar" || p === "logic" || p === "communication" ? { pillar: p } : {};
 
- generateLesson()
- }, [])
+    try {
+      const response = await fetch("/api/lesson/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(payload),
+      });
 
- if (loading) return <div className="text-center py-20 text-xl">Generating lesson...</div>
- if (!lesson) return <div className="text-center py-20 text-xl">Failed to load lesson.</div>
+      const data = await response.json().catch(() => ({}));
 
- return (
- <div className="max-w-4xl mx-auto px-4 py-8">
- <button
- onClick={() => router.push('/')}
- className="mb-4 text-sm text-gray-500 hover:text-white"
- >← Back to Dashboard</button>
+      if (!response.ok) {
+        setError(
+          typeof data.error === "string"
+            ? data.error
+            : "Não foi possível gerar a lição."
+        );
+        setLesson(null);
+        return;
+      }
 
- <div className="border-l-4 border-blue-500 pl-6">
- <div className="prose dark:prose-invert">
- <ReactMarkdown>{lesson.grammar}</ReactMarkdown>
- </div>
- </div>
+      if (
+        data &&
+        typeof data.grammar === "string" &&
+        typeof data.logic === "string" &&
+        typeof data.communication === "string" &&
+        typeof data.mnemonic === "string"
+      ) {
+        setLesson(data as PillarLesson);
+      } else {
+        setError("Resposta inválida do servidor.");
+        setLesson(null);
+      }
+    } catch {
+      setError("Falha de rede. Tente novamente.");
+      setLesson(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
- <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
- <div className="bg-gray-800 p-6 rounded-lg">
- <h3 className="text-xl text-blue-400 font-semibold">Logic</h3>
- <div className="prose dark:prose-invert mt-4">
- <ReactMarkdown>{lesson.logic}</ReactMarkdown>
- </div>
- </div>
+  useEffect(() => {
+    void load();
+  }, [load]);
 
- <div className="bg-gray-700 p-6 rounded-lg">
- <h3 className="text-xl text-green-400 font-semibold">Communication</h3>
- <div className="prose dark:prose-invert mt-4">
- <ReactMarkdown>{lesson.communication}</ReactMarkdown>
- </div>
- </div>
- </div>
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
+        <p className="text-lg text-muted-foreground">Gerando lição…</p>
+      </div>
+    );
+  }
 
- <div className="mt-8 bg-purple-900 p-6 rounded-lg">
- <h3 className="text-xl text-purple-300 font-semibold">Memory Palace</h3>
- <p className="mt-2 text-gray-300">
- {lesson.mnemonic.split('→').join(' → ')}
- </p>
- </div>
- </div>
- )
-}
+  if (error || !lesson) {
+    return (
+      <div className="min-h-screen bg-background text-foreground px-4 py-16 max-w-lg mx-auto space-y-6 text-center">
+        <p className="text-destructive">{error ?? "Lição indisponível."}</p>
+        <button
+          type="button"
+          onClick={() => void load()}
+          className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium"
+        >
+          Tentar de novo
+        </button>
+        <button
+          type="button"
+          onClick={() => router.push("/dashboard")}
+          className="block mx-auto text-sm text-muted-foreground underline"
+        >
+          Voltar ao dashboard
+        </button>
+      </div>
+    );
+  }
 
-interface Lesson {
- grammar: string
- logic: string
- communication: string
- mnemonic: string
+  return (
+    <div className="min-h-screen bg-background text-foreground max-w-4xl mx-auto px-4 py-8">
+      <button
+        type="button"
+        onClick={() => router.push("/dashboard")}
+        className="mb-6 text-sm text-muted-foreground hover:text-foreground transition"
+      >
+        ← Voltar ao dashboard
+      </button>
+
+      <div className="border-l-4 border-primary pl-6">
+        <h2 className="text-sm font-semibold text-primary uppercase tracking-wide mb-2">
+          Grammar
+        </h2>
+        <div className="prose prose-invert max-w-none">
+          <ReactMarkdown>{lesson.grammar}</ReactMarkdown>
+        </div>
+      </div>
+
+      <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="rounded-xl border border-border bg-card p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-3">Logic</h3>
+          <div className="prose prose-invert max-w-none text-sm">
+            <ReactMarkdown>{lesson.logic}</ReactMarkdown>
+          </div>
+        </div>
+        <div className="rounded-xl border border-border bg-card p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-3">Communication</h3>
+          <div className="prose prose-invert max-w-none text-sm">
+            <ReactMarkdown>{lesson.communication}</ReactMarkdown>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-10 rounded-xl border border-border bg-secondary/30 p-6">
+        <h3 className="text-lg font-semibold mb-2">Memory palace</h3>
+        <p className="text-muted-foreground leading-relaxed">
+          {lesson.mnemonic.split("→").join(" → ")}
+        </p>
+      </div>
+    </div>
+  );
 }

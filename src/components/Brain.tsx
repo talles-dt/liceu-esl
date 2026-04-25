@@ -1,8 +1,6 @@
-// src/components/Brain.tsx
-"use client"
+"use client";
 
-import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Stars } from '@react-three/drei'
+import { OrbitControls, Stars } from "@react-three/drei";
 
 export function Brain() {
   return (
